@@ -5,8 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
+import com.meyrforge.tomabien.my_medications.data.entities.AlarmEntity
 import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
+import com.meyrforge.tomabien.my_medications.data.entities.MedicationWithAlarms
 
 @Dao
 interface MedicationDao {
@@ -24,4 +27,15 @@ interface MedicationDao {
 
     @Query("DELETE FROM medication_table")
     suspend fun deleteAllMedications()
+
+    @Transaction
+    @Query("SELECT * FROM medication_table WHERE id = :medicationId")
+    fun getMedicationWithAlarmsById(medicationId: Int): MedicationWithAlarms
+
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
+    fun insertAlarm(alarm: AlarmEntity): Long?
+
+    @Delete
+    suspend fun deleteAlarm(alarm: AlarmEntity) : Int
+
 }

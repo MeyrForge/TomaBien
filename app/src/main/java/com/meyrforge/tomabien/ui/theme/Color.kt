@@ -14,6 +14,7 @@ val SoftBlueLavander = Color(0xFFA4BFEF)
 val PowderedPink = Color(0xFFE8AEB7)
 val LightWarmGray = Color(0xFFF4F4F6)
 val DeepPurple = Color(0xFF27252C)
+val NavBarColor = Color(0xFF34313B)
 val LightAquamarine = Color(0xFFCDEFE1)
 
 val green = Color(0xFF5E9A34)

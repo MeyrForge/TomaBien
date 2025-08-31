@@ -19,6 +19,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHost
+import androidx.navigation.NavHostController
+import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.PowderedPink
@@ -26,6 +30,7 @@ import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 
 @Composable
 fun SingleMedicationComponent(
+    navController: NavController,
     viewModel: MedicationViewModel = hiltViewModel(),
     med: Medication,
     onEdit: () -> Unit,
@@ -65,6 +70,9 @@ fun SingleMedicationComponent(
                 tint = SoftBlueLavander,
                 modifier = Modifier
                     .weight(1f)
+                    .clickable {
+                        navController.navigate(Screen.Alarms.route)
+                    }
             )
         }
         HorizontalDivider(thickness = 2.dp, color = PowderedPink)

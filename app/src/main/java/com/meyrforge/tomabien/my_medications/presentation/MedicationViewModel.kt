@@ -6,9 +6,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meyrforge.tomabien.common.alarm.Alarm
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
+import com.meyrforge.tomabien.my_medications.domain.usecases.AddAlarmUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.DeleteMedicationUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.EditMedicationUseCase
+import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.SaveMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +23,9 @@ class MedicationViewModel @Inject constructor(
     private val saveMedicationUseCase: SaveMedicationUseCase,
     private val getAllMedicationsUseCase: GetAllMedicationsUseCase,
     private val editMedicationUseCase: EditMedicationUseCase,
-    private val deleteMedicationUseCase: DeleteMedicationUseCase
+    private val deleteMedicationUseCase: DeleteMedicationUseCase,
+    private val getAlarmsUseCase: GetAlarmsUseCase,
+    private val addAlarmUseCase: AddAlarmUseCase
 ) :
     ViewModel() {
     private val _medicationId = mutableIntStateOf(0)
@@ -40,6 +45,9 @@ class MedicationViewModel @Inject constructor(
 
     private val _notificationMessage = MutableLiveData<String?>(null)
     val notificationMessage: LiveData<String?> = _notificationMessage
+
+    private val _alarms = MutableLiveData(emptyList<Alarm>())
+    val alarms = _alarms
 
     init {
         getAllMedications()
@@ -120,4 +128,17 @@ class MedicationViewModel @Inject constructor(
     fun clearMessage() {
         _notificationMessage.value = null
     }
+
+    fun addAlarm(requestCode:Int, hour: Int, minute: Int){
+        viewModelScope.launch {
+            addAlarmUseCase(requestCode, hour, minute, medicationId.intValue)
+        }
+    }
+
+    fun getAlarms(medicationId : Int){
+        viewModelScope.launch {
+            _alarms.value = getAlarmsUseCase(medicationId).alarms
+        }
+    }
+
 }

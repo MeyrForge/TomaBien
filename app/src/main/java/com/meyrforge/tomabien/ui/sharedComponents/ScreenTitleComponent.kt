@@ -1,4 +1,4 @@
-package com.meyrforge.tomabien.my_medications.presentation.components
+package com.meyrforge.tomabien.ui.sharedComponents
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -14,6 +14,7 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ fun AddAlarmDialog(
     addAlarm: (hour: Int, minute: Int, requestCode: Int) -> Unit,
     launchPermission: () -> Unit
 ) {
+    val notificationMessage = viewModel.notificationMessage.observeAsState()
     val currentTime = Calendar.getInstance()
     launchPermission()
     val timePickerState = rememberTimePickerState(
@@ -47,12 +49,20 @@ fun AddAlarmDialog(
         confirmButton = {
             TextButton(
                 onClick = {
-                    addAlarm(
+                    viewModel.addAlarm(
+                        "${timePickerState.hour}${timePickerState.minute}${viewModel.medicationId.intValue}".toInt(),
                         timePickerState.hour,
-                        timePickerState.minute,
-                        "${timePickerState.hour}${timePickerState.minute}${viewModel.medicationId.intValue}".toInt()
+                        timePickerState.minute
                     )
-                    onDismiss()
+                    if (notificationMessage.value.isNullOrEmpty()) {
+                        addAlarm(
+                            timePickerState.hour,
+                            timePickerState.minute,
+                            viewModel.medicationId.intValue
+                        )
+                        onDismiss()
+                    }
+
                 }
             ) {
                 Text("Agregar", color = PowderedPink)

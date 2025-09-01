@@ -1,6 +1,7 @@
 package com.meyrforge.tomabien.my_medications.data
 
 import com.meyrforge.tomabien.common.alarm.Alarm
+import com.meyrforge.tomabien.my_medications.data.entities.toAlarm
 import com.meyrforge.tomabien.my_medications.data.entities.toAlarmEntity
 import com.meyrforge.tomabien.my_medications.data.entities.toDomain
 import com.meyrforge.tomabien.my_medications.data.entities.toMedicationEntity
@@ -44,6 +45,12 @@ class MedicationRepositoryImpl @Inject constructor(private val medicationDao: Me
     }
 
     override suspend fun getAlarms(medicationId: Int): MedicationWithAlarmsDomain {
-        return medicationDao.getMedicationWithAlarmsById(medicationId).toDomain()
+        val medication = medicationDao.getMedicationWithAlarmsById(medicationId)
+        val alarms = medicationDao.getAlarms(medicationId)
+        return MedicationWithAlarmsDomain(
+            medicationId,
+            alarms.map { it.toAlarm() },
+            medication.toMedication()
+        )
     }
 }

@@ -1,5 +1,6 @@
 package com.meyrforge.tomabien.my_medications.presentation.components
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,7 @@ fun SingleMedicationComponent(
     navController: NavController,
     viewModel: MedicationViewModel = hiltViewModel(),
     med: Medication,
-    onEdit: () -> Unit,
+    onEdit: () -> Unit
 ) {
     Column {
         Row(
@@ -71,7 +72,7 @@ fun SingleMedicationComponent(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        navController.navigate(Screen.Alarms.route)
+                        navController.navigate(Screen.Alarms.route + "/${med.id}")
                     }
             )
         }

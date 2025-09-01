@@ -1,5 +1,6 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,11 +23,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.common.alarm.Alarm
+import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.components.AddAlarmDialog
 import com.meyrforge.tomabien.my_medications.presentation.components.AlarmListItemComponent
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MedicationAlarmsScreen(
@@ -35,10 +38,8 @@ fun MedicationAlarmsScreen(
     launchPermission: () -> Unit,
     onCancelAlarm: (Int) -> Unit
 ) {
-    viewModel.getAlarms(viewModel.medicationId.intValue)
     val snackbarHostState = remember { SnackbarHostState() }
     var openAlertDialog by remember { mutableStateOf(false) }
-    val medicationName = viewModel.medicationName.value
     val alarms by viewModel.alarms.observeAsState()
 
     Scaffold(
@@ -64,13 +65,17 @@ fun MedicationAlarmsScreen(
                 .padding(24.dp)
         ) {
             item {
-                ScreenTitleComponent(medicationName)
+                ScreenTitleComponent(viewModel.medicationName.value)
             }
             if (!alarms.isNullOrEmpty()) {
                 for (alarm in alarms!!) {
                     item {
-                        AlarmListItemComponent(alarm, onCancelAlarm)
+                        AlarmListItemComponent(alarm = alarm, onCancelAlarm = onCancelAlarm)
                     }
+                }
+            } else {
+                item {
+                    Text("No hay alarmas")
                 }
             }
         }

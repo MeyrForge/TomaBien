@@ -17,13 +17,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.common.alarm.Alarm
+import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.pink
 
 @Composable
-fun AlarmListItemComponent(alarm: Alarm, onCancelAlarm:(requestCode:Int)->Unit) {
-    Column(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+fun AlarmListItemComponent(
+    viewModel: MedicationViewModel = hiltViewModel(),
+    alarm: Alarm,
+    onCancelAlarm: (requestCode: Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -35,7 +45,12 @@ fun AlarmListItemComponent(alarm: Alarm, onCancelAlarm:(requestCode:Int)->Unit) 
                 Icons.Outlined.Delete,
                 "Eliminar alarma",
                 tint = pink,
-                modifier = Modifier.size(32.dp).clickable { onCancelAlarm() }
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        onCancelAlarm(alarm.requestCode)
+                        viewModel.deleteAlarm(alarm)
+                    }
             )
         }
         HorizontalDivider(thickness = 2.dp, color = PowderedPink)

@@ -20,8 +20,8 @@ class AlarmReceiver: BroadcastReceiver() {
 
         val builder = NotificationCompat.Builder(context!!, "TomaBien")
             .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Alarm Manager")
-            .setContentText("Take the medicine aa")
+            .setContentTitle("TomaBien")
+            .setContentText("Toma de medicacion")
             .setAutoCancel(true)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setPriority(NotificationCompat.PRIORITY_HIGH)

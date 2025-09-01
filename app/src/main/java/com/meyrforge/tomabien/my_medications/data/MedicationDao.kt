@@ -9,7 +9,6 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.meyrforge.tomabien.my_medications.data.entities.AlarmEntity
 import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
-import com.meyrforge.tomabien.my_medications.data.entities.MedicationWithAlarms
 
 @Dao
 interface MedicationDao {
@@ -30,10 +29,14 @@ interface MedicationDao {
 
     @Transaction
     @Query("SELECT * FROM medication_table WHERE id = :medicationId")
-    fun getMedicationWithAlarmsById(medicationId: Int): MedicationWithAlarms
+    suspend fun getMedicationWithAlarmsById(medicationId: Int): MedicationEntity
+
+    @Transaction
+    @Query("SELECT * FROM alarm_table WHERE medication_owner_id = :medicationId")
+    suspend fun getAlarms(medicationId: Int): List<AlarmEntity>
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
-    fun insertAlarm(alarm: AlarmEntity): Long?
+    suspend fun insertAlarm(alarm: AlarmEntity): Long?
 
     @Delete
     suspend fun deleteAlarm(alarm: AlarmEntity) : Int

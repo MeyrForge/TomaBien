@@ -41,9 +41,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import com.meyrforge.tomabien.common.Constants
 import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.common.alarm.AlarmReceiver
 import com.meyrforge.tomabien.my_medications.presentation.MedicationAlarmsScreen
@@ -78,16 +81,16 @@ class MainActivity : ComponentActivity() {
                     }
                 val navController = rememberNavController()
 
-                Scaffold(bottomBar = { NavigationBarComponent() }) {
+                Scaffold(bottomBar = { NavigationBarComponent(navController) }) {
                     Box(modifier = Modifier.padding(it)) {
                         NavHost(
                             navController = navController,
-                            startDestination = Screen.Alarms.route
+                            startDestination = Screen.MyMedications.route
                         ) {
                             composable(route = Screen.MyMedications.route) {
-                                MyMedicationsScreen()
+                                MyMedicationsScreen(navController)
                             }
-                            composable(route = Screen.Alarms.route) {
+                            composable(route = Screen.Alarms.route + "/{${Constants.MEDICATION_ID}}") {
                                 MedicationAlarmsScreen(
                                     onSetAlarm = ::setAlarm, onCancelAlarm = ::cancelAlarm,
                                     launchPermission = { permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
@@ -136,9 +139,10 @@ class MainActivity : ComponentActivity() {
                 PendingIntent.getBroadcast(this, requestCode, intent, pendingIntentFlags)
 
             try {
-                alarmManager.setExactAndAllowWhileIdle(
+                alarmManager.setRepeating(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
+                    AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
                 Toast.makeText(this, "Alarm set successfully for $hour:$minute", Toast.LENGTH_LONG)
@@ -173,16 +177,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Preview
 @Composable
-fun NavigationBarComponent() {
+fun NavigationBarComponent(navController: NavController) {
+    var screen = Screen.MyMedications.route
     NavigationBar(
         modifier = Modifier.clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)),
         containerColor = NavBarColor
     ) {
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.AddTask, "Seguimiento") },
-            selected = false,
+            selected = screen == Screen.Alarms.route,
             label = { Text("Seguimiento") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -190,11 +194,15 @@ fun NavigationBarComponent() {
                 indicatorColor = SoftBlueLavander,
                 selectedTextColor = SoftBlueLavander
             ),
-            onClick = {})
+            onClick = {
+                if(screen != Screen.Alarms.route){
+                    screen = Screen.Alarms.route
+                }
+            })
 
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.Medication, "Mis Medicaciones") },
-            selected = true,
+            selected = screen == Screen.MyMedications.route,
             label = { Text("Mis medicaciones") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -202,6 +210,11 @@ fun NavigationBarComponent() {
                 indicatorColor = SoftBlueLavander,
                 selectedTextColor = SoftBlueLavander
             ),
-            onClick = {})
+            onClick = {
+                if(screen != Screen.MyMedications.route){
+                    screen = Screen.MyMedications.route
+                    navController.navigate(Screen.MyMedications.route)
+                }
+            })
     }
 }

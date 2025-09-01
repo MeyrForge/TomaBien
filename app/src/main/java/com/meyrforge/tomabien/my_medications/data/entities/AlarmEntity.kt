@@ -2,8 +2,8 @@ package com.meyrforge.tomabien.my_medications.data.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 import com.meyrforge.tomabien.common.alarm.Alarm
 
 @Entity(
@@ -17,7 +17,7 @@ import com.meyrforge.tomabien.common.alarm.Alarm
     ]
 )
 data class AlarmEntity(
-    @PrimaryKey(autoGenerate = true) val requestCode: Int = 0,
+    @PrimaryKey() @ColumnInfo(name = "request_code") val requestCode: Int,
     @ColumnInfo(name = "medication_owner_id", index = true) val medicationOwnerId: Int,
     val hour: Int,
     val minute: Int,
@@ -28,5 +28,5 @@ fun AlarmEntity.toAlarm(): Alarm {
 }
 
 fun Alarm.toAlarmEntity(): AlarmEntity {
-    return AlarmEntity(requestCode, hour, minute, ownerId)
+    return AlarmEntity(requestCode, ownerId, hour, minute)
 }

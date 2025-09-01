@@ -23,16 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.components.EditMedicationDialog
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.my_medications.presentation.components.SingleMedicationComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import kotlinx.coroutines.flow.StateFlow
 
-@Preview
 @Composable
-fun MyMedicationsScreen(viewModel: MedicationViewModel = hiltViewModel()) {
+fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewModel = hiltViewModel()) {
     var medicationToEdit by remember { mutableStateOf<Medication?>(null) }
     val medicationList: List<Medication> by viewModel.medicationList.observeAsState(emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
@@ -67,6 +68,7 @@ fun MyMedicationsScreen(viewModel: MedicationViewModel = hiltViewModel()) {
                 for (med in medicationList) {
                     item {
                         SingleMedicationComponent(
+                            navController = navController,
                             med = med,
                             onEdit = {
                                 medicationToEdit = med

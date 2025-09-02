@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun MedicationAlarmsScreen(
     viewModel: MedicationViewModel = hiltViewModel(),
-    onSetAlarm: (hour: Int, minute: Int, requestCode: Int) -> Unit,
+    onSetAlarm: (hour: Int, minute: Int, requestCode: Int, medName: String) -> Unit,
     launchPermission: () -> Unit,
     onCancelAlarm: (Int) -> Unit
 ) {

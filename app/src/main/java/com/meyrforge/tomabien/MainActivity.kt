@@ -49,6 +49,7 @@ import androidx.navigation.compose.rememberNavController
 import com.meyrforge.tomabien.common.Constants
 import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.common.alarm.AlarmReceiver
+import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerScreen
 import com.meyrforge.tomabien.my_medications.presentation.MedicationAlarmsScreen
 import com.meyrforge.tomabien.my_medications.presentation.MyMedicationsScreen
 import com.meyrforge.tomabien.ui.theme.NavBarColor
@@ -96,6 +97,9 @@ class MainActivity : ComponentActivity() {
                                     launchPermission = { permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
                                 )
                             }
+                            composable(route = Screen.MedicationTracker.route) {
+                                MedicationTrackerScreen()
+                            }
                         }
 
                     }
@@ -117,21 +121,27 @@ class MainActivity : ComponentActivity() {
     }
 
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-    fun setAlarm(hour: Int, minute: Int, medId: Int) {
+    fun setAlarm(hour: Int, minute: Int, requestCode: Int, medName: String) {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            val calendar = Calendar.getInstance()
-            calendar[Calendar.HOUR_OF_DAY] = hour
-            calendar[Calendar.MINUTE] = minute
-            calendar[Calendar.SECOND] = 0
-            calendar[Calendar.MILLISECOND] = 0
+            val calendar = Calendar.getInstance().apply {
+                timeInMillis = System.currentTimeMillis()
+                set(Calendar.HOUR_OF_DAY, hour)
+                set(Calendar.MINUTE, minute)
+                set(Calendar.SECOND, 0)
+                // If the set time is in the past, advance to the next day
+                if (timeInMillis <= System.currentTimeMillis()) {
+                    add(Calendar.DAY_OF_YEAR, 1)
+                }
+            }
 
             val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
             val intent = Intent(this, AlarmReceiver::class.java)
-            val requestCode = "$hour$minute$medId".toInt()
+            intent.putExtra("message", "Alarma de toma para $medName")
+            intent.putExtra("alarm_id", requestCode)
 
             val pendingIntentFlags =
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -186,7 +196,7 @@ fun NavigationBarComponent(navController: NavController) {
     ) {
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.AddTask, "Seguimiento") },
-            selected = screen == Screen.Alarms.route,
+            selected = screen == Screen.MedicationTracker.route,
             label = { Text("Seguimiento") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -195,8 +205,9 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if(screen != Screen.Alarms.route){
-                    screen = Screen.Alarms.route
+                if(screen != Screen.MedicationTracker.route){
+                    screen = Screen.MedicationTracker.route
+                    navController.navigate(Screen.MedicationTracker.route)
                 }
             })
 

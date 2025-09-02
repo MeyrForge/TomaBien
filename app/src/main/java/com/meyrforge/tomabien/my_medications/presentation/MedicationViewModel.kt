@@ -1,6 +1,5 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
-import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -19,8 +18,6 @@ import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.SaveMedicationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 

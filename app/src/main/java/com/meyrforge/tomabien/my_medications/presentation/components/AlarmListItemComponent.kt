@@ -29,6 +29,9 @@ fun AlarmListItemComponent(
     alarm: Alarm,
     onCancelAlarm: (requestCode: Int) -> Unit
 ) {
+    val hour = if (alarm.hour.toString().length == 1){ "0"+alarm.hour.toString()} else alarm.hour.toString()
+    val minute = if (alarm.minute.toString().length == 1){ "0"+alarm.minute.toString()} else alarm.minute.toString()
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -40,7 +43,7 @@ fun AlarmListItemComponent(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text("${alarm.hour}:${alarm.minute}", color = PowderedPink, fontSize = 32.sp)
+            Text("$hour:$minute", color = PowderedPink, fontSize = 32.sp)
             Icon(
                 Icons.Outlined.Delete,
                 "Eliminar alarma",

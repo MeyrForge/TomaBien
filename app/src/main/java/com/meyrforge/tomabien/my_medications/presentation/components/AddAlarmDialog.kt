@@ -30,7 +30,7 @@ import java.util.Calendar
 fun AddAlarmDialog(
     viewModel: MedicationViewModel = hiltViewModel(),
     onDismiss: () -> Unit,
-    addAlarm: (hour: Int, minute: Int, requestCode: Int) -> Unit,
+    addAlarm: (hour: Int, minute: Int, requestCode: Int, medName: String) -> Unit,
     launchPermission: () -> Unit
 ) {
     val notificationMessage = viewModel.notificationMessage.observeAsState()
@@ -41,6 +41,7 @@ fun AddAlarmDialog(
         initialMinute = currentTime.get(Calendar.MINUTE),
         is24Hour = true
     )
+    val code = "${timePickerState.hour}${timePickerState.minute}${viewModel.medicationId.intValue}".toInt()
     AlertDialog(
         icon = { Icon(Icons.Outlined.Alarm, "Alarma") },
         title = { Text("Agregar alarma") },
@@ -50,15 +51,16 @@ fun AddAlarmDialog(
             TextButton(
                 onClick = {
                     viewModel.addAlarm(
-                        "${timePickerState.hour}${timePickerState.minute}${viewModel.medicationId.intValue}".toInt(),
+                        code,
                         timePickerState.hour,
-                        timePickerState.minute
+                        timePickerState.minute,
                     )
                     if (notificationMessage.value.isNullOrEmpty()) {
                         addAlarm(
                             timePickerState.hour,
                             timePickerState.minute,
-                            viewModel.medicationId.intValue
+                            code,
+                            viewModel.medicationName.value
                         )
                         onDismiss()
                     }

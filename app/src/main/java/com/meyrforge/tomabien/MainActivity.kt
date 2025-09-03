@@ -189,7 +189,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigationBarComponent(navController: NavController) {
-    var screen = Screen.MyMedications.route
+    var screen by remember { mutableStateOf(Screen.MyMedications.route) }
     NavigationBar(
         modifier = Modifier.clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)),
         containerColor = NavBarColor

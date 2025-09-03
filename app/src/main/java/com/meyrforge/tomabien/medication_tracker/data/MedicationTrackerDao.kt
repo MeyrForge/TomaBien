@@ -13,7 +13,7 @@ import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
 interface MedicationTrackerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMedicationTracker(medicationTracker: MedicationTrackerEntity): Long
+    suspend fun insertMedicationTracker(medicationTracker: MedicationTrackerEntity): Long?
 
     @Query("SELECT * FROM medication_tracker_table")
     suspend fun getAllMedicationTrackers(): List<MedicationTrackerEntity>?

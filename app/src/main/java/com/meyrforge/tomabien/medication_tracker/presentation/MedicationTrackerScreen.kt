@@ -43,10 +43,18 @@ fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewMode
                 if (it.isNotEmpty()) {
                     for (medWithAlarms in it) {
                         for (alarm in medWithAlarms.alarms) {
+                            val hour = if (alarm.hour.toString().length == 1) {
+                                "0" + alarm.hour.toString()
+                            } else alarm.hour.toString()
+                            val minute = if (alarm.minute.toString().length == 1) {
+                                "0" + alarm.minute.toString()
+                            } else alarm.minute.toString()
+
                             item {
                                 MedicationTrackerItemComponent(
-                                    alarm.hour.toString(),
-                                    medWithAlarms.medication.name
+                                    medWithAlarms.medication.id ?: 0,
+                                    "$hour:$minute",
+                                    "${medWithAlarms.medication.name} ${medWithAlarms.medication.dosage}"
                                 )
                             }
                         }

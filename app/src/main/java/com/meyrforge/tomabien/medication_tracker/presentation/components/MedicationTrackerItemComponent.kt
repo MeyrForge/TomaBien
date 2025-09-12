@@ -19,12 +19,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewModelScope
 import com.meyrforge.tomabien.common.getDayOfWeek
 import com.meyrforge.tomabien.common.getMonth
 import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerViewModel
 import com.meyrforge.tomabien.ui.theme.PowderedPink
-import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @Composable

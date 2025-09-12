@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddTask
 import androidx.compose.material.icons.outlined.Medication
+import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarDefaults
@@ -56,6 +57,7 @@ import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.ui.theme.TomaBienTheme
+import com.meyrforge.tomabien.weekly_summary.presentation.WeeklySummaryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
 
@@ -99,6 +101,9 @@ class MainActivity : ComponentActivity() {
                             }
                             composable(route = Screen.MedicationTracker.route) {
                                 MedicationTrackerScreen()
+                            }
+                            composable(route = Screen.WeeklySummary.route) {
+                                WeeklySummaryScreen()
                             }
                         }
 
@@ -205,9 +210,26 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if(screen != Screen.MedicationTracker.route){
+                if (screen != Screen.MedicationTracker.route) {
                     screen = Screen.MedicationTracker.route
                     navController.navigate(Screen.MedicationTracker.route)
+                }
+            })
+
+        NavigationBarItem(
+            icon = { Icon(Icons.Outlined.Summarize, "Resumen") },
+            selected = screen == Screen.WeeklySummary.route,
+            label = { Text("Resumen Semanal") },
+            colors = NavigationBarItemDefaults.colors(
+                unselectedIconColor = PowderedPink,
+                unselectedTextColor = PowderedPink,
+                indicatorColor = SoftBlueLavander,
+                selectedTextColor = SoftBlueLavander
+            ),
+            onClick = {
+                if (screen != Screen.WeeklySummary.route) {
+                    screen = Screen.WeeklySummary.route
+                    navController.navigate(Screen.WeeklySummary.route)
                 }
             })
 
@@ -222,7 +244,7 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if(screen != Screen.MyMedications.route){
+                if (screen != Screen.MyMedications.route) {
                     screen = Screen.MyMedications.route
                     navController.navigate(Screen.MyMedications.route)
                 }

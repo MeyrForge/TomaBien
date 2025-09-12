@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.medication_tracker.presentation.components.MedicationTrackerItemComponent
+import com.meyrforge.tomabien.ui.sharedComponents.DateComponent
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.pink
@@ -38,6 +39,9 @@ fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewMode
         ) {
             item {
                 ScreenTitleComponent("Seguimiento")
+            }
+            item {
+                DateComponent()
             }
             list?.let {
                 if (it.isNotEmpty()) {

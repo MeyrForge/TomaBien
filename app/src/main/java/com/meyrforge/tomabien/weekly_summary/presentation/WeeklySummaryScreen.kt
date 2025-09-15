@@ -1,9 +1,11 @@
 package com.meyrforge.tomabien.weekly_summary.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -17,11 +19,17 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
+import com.meyrforge.tomabien.ui.theme.PowderedPink
 
 @Composable
 fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
-    val trackerList by viewModel.medicationTrackerList.observeAsState()
+    val trackerWithMedList by viewModel.trackerWithMedicationList.observeAsState()
+
+    val groupedByDate = trackerWithMedList?.groupBy {
+        it.tracker.date
+    }?.toSortedMap()
+
 
     Scaffold(
         snackbarHost = {
@@ -38,8 +46,25 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
             item {
                 ScreenTitleComponent("Resumen semanal")
             }
-            for (tracker in trackerList ?: emptyList()) {
-                item { Text(tracker.toString()) }
+            groupedByDate?.forEach { (date, trackersForDate) ->
+                item {
+                    Text(
+                        text = date,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = PowderedPink,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+                items(trackersForDate.size) { index ->
+                    val tracker = trackersForDate[index]
+                     Column(modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)) {
+                        Text("Medicación: ${tracker.medication.name}")
+                        Text("Horario: ${tracker.tracker.hour}")
+                        Text(text =
+                            if (tracker.tracker.taken) "Tomada" else "No tomada"
+                        )
+                    }
+                }
             }
         }
     }

@@ -29,7 +29,7 @@ interface MedicationDao {
 
     @Transaction
     @Query("SELECT * FROM medication_table WHERE id = :medicationId")
-    suspend fun getMedicationWithAlarmsById(medicationId: Int): MedicationEntity
+    suspend fun getMedicationWithAlarmsById(medicationId: Int): MedicationEntity?
 
     @Transaction
     @Query("SELECT * FROM alarm_table WHERE medication_owner_id = :medicationId")

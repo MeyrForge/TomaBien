@@ -5,4 +5,5 @@ data class Medication(
     val name: String,
     val dosage: String,
     val optional: Boolean,
-    var taken: Boolean = false)
+    var taken: Boolean = false,
+    var deleted: Boolean = false)

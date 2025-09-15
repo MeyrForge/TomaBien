@@ -10,7 +10,7 @@ import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
 
 @Database(
     entities = [MedicationEntity::class, AlarmEntity::class, MedicationTrackerEntity::class],
-    version = 5
+    version = 6
 )
 abstract class TomaBienDatabase : RoomDatabase(){
     abstract fun medicationDao(): MedicationDao

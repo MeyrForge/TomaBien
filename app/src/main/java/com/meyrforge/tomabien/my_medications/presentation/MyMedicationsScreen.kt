@@ -83,10 +83,11 @@ fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewM
             }
         }
         if (openAlertDialog) {
-            EditMedicationDialog(med = medicationToEdit) { openAlertDialog = false }
+            EditMedicationDialog(medToEdit = medicationToEdit) { openAlertDialog = false }
         }
         LaunchedEffect(medicationList) {
             openAlertDialog = false
+            medicationToEdit = null
         }
         NotificationSnackbar(viewModel, snackbarHostState)
     }

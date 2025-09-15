@@ -35,9 +35,10 @@ import com.meyrforge.tomabien.ui.theme.pink
 @Composable
 fun EditMedicationDialog(
     viewModel: MedicationViewModel = hiltViewModel(),
-    med: Medication?,
+    medToEdit: Medication?,
     onDismiss: () -> Unit
 ) {
+    var med = medToEdit
     if (med != null) {
         viewModel.onMedicationNameChange(med.name)
         viewModel.onMedicationDosageChange(med.dosage)
@@ -60,8 +61,9 @@ fun EditMedicationDialog(
                     if (med == null) {
                         viewModel.saveMedication()
                     } else {
-                        viewModel.onMedicationIdChange(med.id ?: 0)
+                        viewModel.onMedicationIdChange(med?.id ?: 0)
                         viewModel.editMedication()
+                        med = null
                     }
                 }
             ) {

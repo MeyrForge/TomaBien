@@ -10,7 +10,8 @@ data class MedicationEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "medication_name") val medicationName: String,
     @ColumnInfo(name = "medication_dosage") val medicationDosage: String,
-    @ColumnInfo(name = "optional") val optional: Boolean
+    @ColumnInfo(name = "optional") val optional: Boolean,
+    @ColumnInfo(name = "deleted") val deleted: Boolean
 )
 
 fun Medication.toMedicationEntity(): MedicationEntity{
@@ -19,13 +20,15 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             id = id,
             medicationName = name,
             medicationDosage = dosage,
-            optional = optional
+            optional = optional,
+            deleted = deleted
         )
     } else {
         MedicationEntity(
             medicationName = name,
             medicationDosage = dosage,
-            optional = optional
+            optional = optional,
+            deleted = deleted
         )
     }
 }
@@ -35,6 +38,7 @@ fun MedicationEntity.toMedication(): Medication{
         id = id,
         name = medicationName,
         dosage = medicationDosage,
-        optional = optional
+        optional = optional,
+        deleted = deleted
     )
 }

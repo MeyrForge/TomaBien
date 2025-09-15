@@ -27,7 +27,6 @@ class MedicationViewModel @Inject constructor(
     private val saveMedicationUseCase: SaveMedicationUseCase,
     private val getAllMedicationsUseCase: GetAllMedicationsUseCase,
     private val editMedicationUseCase: EditMedicationUseCase,
-    private val deleteMedicationUseCase: DeleteMedicationUseCase,
     private val getAlarmsUseCase: GetAlarmsUseCase,
     private val addAlarmUseCase: AddAlarmUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase
@@ -102,8 +101,9 @@ class MedicationViewModel @Inject constructor(
     private fun getAllMedications() {
         viewModelScope.launch {
             val medList = getAllMedicationsUseCase()
+
             if (medList != null)
-                _medicationList.value = medList
+                _medicationList.value = medList.filter { !it.deleted }
         }
     }
 
@@ -118,7 +118,11 @@ class MedicationViewModel @Inject constructor(
                 )
             )
             if (result) {
+                _medicationName.value = ""
+                _medicationDosage.value = ""
+                _isOptional.value = false
                 getAllMedications()
+                _notificationMessage.value = "Medicacion editada"
             } else {
                 _notificationMessage.value = "Algo salio mal"
             }
@@ -127,7 +131,8 @@ class MedicationViewModel @Inject constructor(
 
     fun deleteMedication(medication: Medication) {
         viewModelScope.launch {
-            val result = deleteMedicationUseCase(medication)
+            medication.deleted = true
+            val result = editMedicationUseCase(medication)
             if (result) {
                 getAllMedications()
             } else {
@@ -153,7 +158,7 @@ class MedicationViewModel @Inject constructor(
         viewModelScope.launch {
             val result = getAlarmsUseCase(medicationId)
             _alarms.value = result.alarms
-            _medicationName.value = result.medication.name
+            _medicationName.value = result.medication?.name ?: "Sin nombre"
         }
     }
 

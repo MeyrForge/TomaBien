@@ -46,11 +46,18 @@ class MedicationRepositoryImpl @Inject constructor(private val medicationDao: Me
 
     override suspend fun getAlarms(medicationId: Int): MedicationWithAlarmsDomain {
         val medication = medicationDao.getMedicationWithAlarmsById(medicationId)
-        val alarms = medicationDao.getAlarms(medicationId)
-        return MedicationWithAlarmsDomain(
-            medicationId,
-            alarms.map { it.toAlarm() },
-            medication.toMedication()
-        )
+        medication?.let{
+            val alarms = medicationDao.getAlarms(medicationId)
+            return MedicationWithAlarmsDomain(
+                medicationId,
+                alarms.map { it.toAlarm() },
+                medication.toMedication()
+            )
+        }
+        return MedicationWithAlarmsDomain()
+    }
+
+    override suspend fun getMedicationById(medicationId: Int): Medication? {
+        return medicationDao.getMedicationWithAlarmsById(medicationId)?.toMedication()
     }
 }

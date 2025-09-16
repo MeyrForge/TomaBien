@@ -80,20 +80,25 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun saveMedication() {
-        viewModelScope.launch {
-            val result = saveMedicationUseCase(
-                _medicationName.value,
-                _medicationDosage.value,
-                _isOptional.value
-            )
-            if (result) {
-                _medicationName.value = ""
-                _medicationDosage.value = ""
-                _isOptional.value = false
-                getAllMedications()
-                _notificationMessage.value = "Medicacion agregada"
-            } else {
-                _notificationMessage.value = "Algo salio mal"
+        if(_medicationName.value.isEmpty() ||
+        _medicationDosage.value.isEmpty()){
+            _notificationMessage.value = "Completar los campos"
+        }else{
+            viewModelScope.launch {
+                val result = saveMedicationUseCase(
+                    _medicationName.value,
+                    _medicationDosage.value,
+                    _isOptional.value
+                )
+                if (result) {
+                    _medicationName.value = ""
+                    _medicationDosage.value = ""
+                    _isOptional.value = false
+                    getAllMedications()
+                    _notificationMessage.value = "Medicacion agregada"
+                } else {
+                    _notificationMessage.value = "Algo salio mal"
+                }
             }
         }
     }
@@ -108,23 +113,28 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun editMedication() {
-        viewModelScope.launch {
-            val result = editMedicationUseCase(
-                Medication(
-                    medicationId.intValue,
-                    medicationName.value,
-                    medicationDosage.value,
-                    isOptional.value
+        if(_medicationName.value.isEmpty() ||
+            _medicationDosage.value.isEmpty()){
+            _notificationMessage.value = "Completar los campos"
+        }else {
+            viewModelScope.launch {
+                val result = editMedicationUseCase(
+                    Medication(
+                        medicationId.intValue,
+                        medicationName.value,
+                        medicationDosage.value,
+                        isOptional.value
+                    )
                 )
-            )
-            if (result) {
-                _medicationName.value = ""
-                _medicationDosage.value = ""
-                _isOptional.value = false
-                getAllMedications()
-                _notificationMessage.value = "Medicacion editada"
-            } else {
-                _notificationMessage.value = "Algo salio mal"
+                if (result) {
+                    _medicationName.value = ""
+                    _medicationDosage.value = ""
+                    _isOptional.value = false
+                    getAllMedications()
+                    _notificationMessage.value = "Medicacion editada"
+                } else {
+                    _notificationMessage.value = "Algo salio mal"
+                }
             }
         }
     }
@@ -157,8 +167,11 @@ class MedicationViewModel @Inject constructor(
     private fun getAlarms(medicationId: Int) {
         viewModelScope.launch {
             val result = getAlarmsUseCase(medicationId)
-            _alarms.value = result.alarms
-            _medicationName.value = result.medication?.name ?: "Sin nombre"
+            result?.let{
+                _alarms.value = it.alarms
+                _medicationName.value = it.medication?.name ?: "Sin nombre"
+
+            }
         }
     }
 

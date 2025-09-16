@@ -20,15 +20,38 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
     val snackbarHostState = remember { SnackbarHostState() }
     val trackerWithMedList by viewModel.trackerWithMedicationList.observeAsState()
 
+    val dateFormatter = DateTimeFormatter.ofPattern(
+        "dd/MM/yyyy",
+        Locale.getDefault()
+    )
+
+
     val groupedByDate = trackerWithMedList?.groupBy {
-        it.tracker.date
-    }?.toSortedMap()
+        // Parse the date string to LocalDate for proper sorting
+        try {
+            LocalDate.parse(it.tracker.date, dateFormatter)
+        } catch (e: Exception) {
+            // Handle potential parsing errors, e.g., log or use a default date
+            // For simplicity, this example uses a very old date if parsing fails,
+            // which would put unparseable dates at the beginning.
+            // Adjust this error handling as needed for your application.
+            LocalDate.MIN
+        }
+    }
+        ?.toSortedMap(compareByDescending { it }) // Sort by LocalDate in descending order (latest first)
+        ?.mapKeys {
+            // Convert the LocalDate key back to String for display
+            it.key.format(dateFormatter)
+        }
 
 
     Scaffold(

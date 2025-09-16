@@ -37,7 +37,10 @@ fun MedicationTrackerItemComponent(
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
-    val date = "$day/$month/$year"
+    val formattedDay = day.toString().padStart(2, '0')
+    val formattedMonth = month.toString().padStart(2, '0')
+
+    val date = "$formattedDay/$formattedMonth/$year"
     val trackerList by viewModel.medicationTrackerList.observeAsState()
 
     for (tracker in trackerList?:emptyList()){

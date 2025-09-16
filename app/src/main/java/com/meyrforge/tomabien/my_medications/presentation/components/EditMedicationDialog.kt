@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,6 +46,7 @@ fun EditMedicationDialog(
         viewModel.onMedicationDosageChange(med.dosage)
         viewModel.onIsOptionalChange(med.optional)
     }
+    var emptyFields by remember { mutableStateOf(false) }
     AlertDialog(
         icon = {
             Icon(Icons.Outlined.AddCircleOutline, contentDescription = "Icono")
@@ -51,19 +54,32 @@ fun EditMedicationDialog(
         title = {
             Text(text = if (med == null) "Agregar medicación" else "Editar medicacion")
         },
-        text = { NewMedicationContent(med = med) },
+        text = {
+            Column {
+                NewMedicationContent(med = med)
+                if (emptyFields)
+                    Text("Completar los campos", color = pink)
+            }
+        },
         onDismissRequest = {
             onDismiss()
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (med == null) {
-                        viewModel.saveMedication()
+                    if (viewModel.medicationName.value.isEmpty() ||
+                        viewModel.medicationDosage.value.isEmpty()
+                    ) {
+                        emptyFields = true
                     } else {
-                        viewModel.onMedicationIdChange(med?.id ?: 0)
-                        viewModel.editMedication()
-                        med = null
+
+                        if (med == null) {
+                            viewModel.saveMedication()
+                        } else {
+                            viewModel.onMedicationIdChange(med?.id ?: 0)
+                            viewModel.editMedication()
+                            med = null
+                        }
                     }
                 }
             ) {
@@ -107,7 +123,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
             ) {
                 OutlinedTextField(
                     value = medicationName,
-                    onValueChange = viewModel::onMedicationNameChange ,
+                    onValueChange = viewModel::onMedicationNameChange,
                     label = { Text("Nombre") },
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedTextColor = PowderedPink,
@@ -130,9 +146,9 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 OutlinedTextField(
                     value = medicationDosage,
                     onValueChange = {
-                            if (it.isEmpty() || it.matches(pattern)) viewModel.onMedicationDosageChange(
-                                it
-                            )
+                        if (it.isEmpty() || it.matches(pattern)) viewModel.onMedicationDosageChange(
+                            it
+                        )
                     },
                     label = { Text("Dosis") },
                     colors = OutlinedTextFieldDefaults.colors(

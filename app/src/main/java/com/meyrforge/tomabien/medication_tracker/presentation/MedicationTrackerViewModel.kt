@@ -90,8 +90,10 @@ class MedicationTrackerViewModel @Inject constructor(
             medications?.let {
                 for (medication in medications) {
                     val result = getAlarmsUseCase(medication.id!!)
-                    if (result.alarms.isNotEmpty() && !medication.deleted) {
-                        medicationsThatHaveAlarms.add(result)
+                    result?.let{
+                        if (it.alarms.isNotEmpty() && !medication.deleted) {
+                            medicationsThatHaveAlarms.add(it)
+                        }
                     }
                 }
             }

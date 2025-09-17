@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TomaBien</string>
+    <string name="seguimiento">Seguimiento</string>
+    <string name="no_hay_medicaciones_con_alarma">No hay medicaciones con alarma</string>
 </resources>

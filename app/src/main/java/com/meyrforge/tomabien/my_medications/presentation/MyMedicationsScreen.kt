@@ -1,11 +1,15 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -19,9 +23,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
@@ -29,7 +35,9 @@ import com.meyrforge.tomabien.my_medications.presentation.components.EditMedicat
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.my_medications.presentation.components.SingleMedicationComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
+import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -47,7 +55,7 @@ fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewM
                 contentColor = DeepPurple,
                 icon = { Icon(Icons.Outlined.Add, "Agregar") },
                 text = {
-                    Text("Agregar medicacion")
+                    Text("Agregar medicación")
                 })
         },
         snackbarHost = {
@@ -79,6 +87,40 @@ fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewM
             } else {
                 item {
                     Text("No hay medicaciones")
+                }
+            }
+
+            item {
+                Column {
+                    Row(modifier = Modifier.padding(horizontal = 5.dp).padding(top = 30.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Outlined.Album,
+                            "Opcional",
+                            tint = SoftBlueLavander,
+                            modifier = Modifier.weight(1f).size(16.dp)
+                        )
+                        Text(
+                            "Medicación opcional",
+                            fontSize = 16.sp,
+                            color = PowderedPink,
+                            modifier = Modifier.weight(6f)
+                        )
+                    }
+
+                    Row(modifier = Modifier.padding(horizontal = 5.dp).padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            Icons.Outlined.Album,
+                            "No Opcional",
+                            tint = NavBarColor,
+                            modifier = Modifier.weight(1f).size(16.dp)
+                        )
+                        Text(
+                            "Medicación no opcional",
+                            fontSize = 16.sp,
+                            color = PowderedPink,
+                            modifier = Modifier.weight(6f)
+                        )
+                    }
                 }
             }
         }

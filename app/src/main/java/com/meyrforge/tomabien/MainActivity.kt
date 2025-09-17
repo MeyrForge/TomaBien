@@ -160,12 +160,12 @@ class MainActivity : ComponentActivity() {
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
-                Toast.makeText(this, "Alarm set successfully for $hour:$minute", Toast.LENGTH_LONG)
+                Toast.makeText(this, "Alarma colocada exitósamente para $hour:$minute", Toast.LENGTH_LONG)
                     .show()
             } catch (e: SecurityException) {
                 Toast.makeText(
                     this,
-                    "Permission to schedule exact alarms not granted.",
+                    "El permiso para mostrar notificaciones no fue otorgado",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -188,7 +188,7 @@ class MainActivity : ComponentActivity() {
             PendingIntent.getBroadcast(this, requestCode, intent, pendingIntentFlags)
 
         alarmManager.cancel(pendingIntent)
-        Toast.makeText(this, "Alarm cancelled", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Alarma cancelada", Toast.LENGTH_LONG).show()
     }
 }
 
@@ -219,7 +219,7 @@ fun NavigationBarComponent(navController: NavController) {
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.Summarize, "Resumen") },
             selected = screen == Screen.WeeklySummary.route,
-            label = { Text("Resumen Semanal") },
+            label = { Text("Resumen de Toma") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
                 unselectedTextColor = PowderedPink,

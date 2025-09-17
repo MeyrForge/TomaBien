@@ -26,6 +26,8 @@ import androidx.navigation.NavHostController
 import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
+import com.meyrforge.tomabien.ui.theme.LightWarmGray
+import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 
@@ -46,7 +48,7 @@ fun SingleMedicationComponent(
             Icon(
                 Icons.Outlined.Album,
                 "Opcional",
-                tint = if (med.optional) SoftBlueLavander else Color.Gray,
+                tint = if (med.optional) SoftBlueLavander else NavBarColor,
                 modifier = Modifier.weight(1f)
             )
             Text(
@@ -58,7 +60,7 @@ fun SingleMedicationComponent(
             Icon(
                 Icons.Outlined.Edit,
                 "Editar",
-                tint = PowderedPink,
+                tint = LightWarmGray,
                 modifier = Modifier
                     .weight(2f)
                     .clickable {

@@ -1,6 +1,5 @@
 package com.meyrforge.tomabien.medication_tracker.presentation
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,6 @@ import com.meyrforge.tomabien.medication_tracker.domain.models.MedicationTracker
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetAllMedicationTrackerUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.SaveMedicationTrackerUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.UpdateMedicationTrackerUseCase
-import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.domain.models.MedicationWithAlarmsDomain
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase

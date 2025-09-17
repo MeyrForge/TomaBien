@@ -67,7 +67,7 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
                 .padding(24.dp)
         ) {
             item {
-                ScreenTitleComponent("Resumen semanal")
+                ScreenTitleComponent("Resumen de Toma")
             }
             groupedByDate?.forEach { (date, trackersForDate) ->
                 item {

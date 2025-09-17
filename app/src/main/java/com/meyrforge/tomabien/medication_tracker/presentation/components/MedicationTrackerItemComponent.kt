@@ -22,7 +22,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.common.getDayOfWeek
 import com.meyrforge.tomabien.common.getMonth
 import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerViewModel
+import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import java.util.Calendar
 
 @Composable
@@ -58,7 +60,7 @@ fun MedicationTrackerItemComponent(
             Text(
                 hour,
                 fontSize = 24.sp,
-                color = PowderedPink
+                color = LightWarmGray
             )
             Text(
                 medName,
@@ -74,7 +76,7 @@ fun MedicationTrackerItemComponent(
                 colors = CheckboxDefaults.colors(checkedColor = PowderedPink)
             )
         }
-        HorizontalDivider(thickness = 2.dp, color = PowderedPink)
+        HorizontalDivider(thickness = 2.dp, color = SoftBlueLavander)
     }
 }
 

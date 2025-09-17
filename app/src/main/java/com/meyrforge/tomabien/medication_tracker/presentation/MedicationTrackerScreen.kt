@@ -13,8 +13,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.meyrforge.tomabien.R
+import com.meyrforge.tomabien.R.string
 import com.meyrforge.tomabien.medication_tracker.presentation.components.MedicationTrackerItemComponent
 import com.meyrforge.tomabien.ui.sharedComponents.DateComponent
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
@@ -38,7 +41,7 @@ fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewMode
                 .padding(24.dp)
         ) {
             item {
-                ScreenTitleComponent("Seguimiento")
+                ScreenTitleComponent(stringResource(string.seguimiento))
             }
             item {
                 DateComponent()
@@ -65,7 +68,7 @@ fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewMode
                     }
                 } else {
                     item {
-                        Text("No hay medicaciones con alarma", color = pink)
+                        Text(stringResource(string.no_hay_medicaciones_con_alarma), color = pink)
                     }
                 }
             }

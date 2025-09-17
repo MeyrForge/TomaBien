@@ -52,7 +52,7 @@ fun EditMedicationDialog(
             Icon(Icons.Outlined.AddCircleOutline, contentDescription = "Icono")
         },
         title = {
-            Text(text = if (med == null) "Agregar medicación" else "Editar medicacion")
+            Text(text = if (med == null) "Agregar medicación" else "Editar medicación")
         },
         text = {
             Column {
@@ -180,7 +180,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
         if (med != null) {
             TextButton({ viewModel.deleteMedication(med) }, contentPadding = PaddingValues(0.dp)) {
                 Text(
-                    "Eliminar medicacion",
+                    "Eliminar medicación",
                     color = pink,
                     fontSize = 16.sp
                 )

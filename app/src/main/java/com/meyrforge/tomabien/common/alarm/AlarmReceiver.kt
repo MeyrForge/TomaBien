@@ -21,7 +21,7 @@ class AlarmReceiver: BroadcastReceiver() {
         val pendingIntent = PendingIntent.getActivity(context, requestCode, i, PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(context!!, "TomaBien")
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("TomaBien")
             .setContentText(message)
             .setDefaults(NotificationCompat.DEFAULT_ALL)

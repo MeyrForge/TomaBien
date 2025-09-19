@@ -137,10 +137,10 @@ class MainActivity : ComponentActivity() {
                 set(Calendar.HOUR_OF_DAY, hour)
                 set(Calendar.MINUTE, minute)
                 set(Calendar.SECOND, 0)
-                // If the set time is in the past, advance to the next day
-                if (timeInMillis <= System.currentTimeMillis()) {
-                    add(Calendar.DAY_OF_YEAR, 1)
-                }
+//                // If the set time is in the past, advance to the next day
+//                if (timeInMillis <= System.currentTimeMillis()) {
+//                    add(Calendar.DAY_OF_YEAR, 1)
+//                }
             }
 
             val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager

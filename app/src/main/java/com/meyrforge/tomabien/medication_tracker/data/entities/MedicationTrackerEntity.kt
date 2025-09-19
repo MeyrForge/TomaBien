@@ -48,10 +48,20 @@ fun MedicationTrackerEntity.toDomain(): MedicationTracker{
 }
 
 fun MedicationTracker.toEntity(): MedicationTrackerEntity{
-    return MedicationTrackerEntity(
-        date = date,
-        hour = hour,
-        medicationId = medicationId,
-        taken = taken
-    )
+    return if (id!=null){
+        MedicationTrackerEntity(
+            id = id,
+            date = date,
+            hour = hour,
+            medicationId = medicationId,
+            taken = taken
+        )
+    }else{
+        MedicationTrackerEntity(
+            date = date,
+            hour = hour,
+            medicationId = medicationId,
+            taken = taken
+        )
+    }
 }

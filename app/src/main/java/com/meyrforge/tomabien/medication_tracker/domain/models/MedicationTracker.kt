@@ -5,5 +5,5 @@ data class MedicationTracker(
     val date: String,
     val hour: String,
     val medicationId: Int,
-    val taken: Boolean
+    var taken: Boolean
 )

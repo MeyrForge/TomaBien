@@ -37,7 +37,7 @@ fun MedicationTrackerItemComponent(
     var wasTaken by remember { mutableStateOf(false) }
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
+    val month = calendar.get(Calendar.MONTH)+1
     val day = calendar.get(Calendar.DAY_OF_MONTH)
     val formattedDay = day.toString().padStart(2, '0')
     val formattedMonth = month.toString().padStart(2, '0')
@@ -50,6 +50,7 @@ fun MedicationTrackerItemComponent(
             wasTaken = tracker.taken
         }
     }
+
 
     Column(modifier = Modifier.fillMaxWidth()) {
         Row(
@@ -70,7 +71,7 @@ fun MedicationTrackerItemComponent(
             Checkbox(
                 wasTaken,
                 {
-                    wasTaken = !wasTaken
+                    wasTaken = it
                     viewModel.saveOrEditMedicationTracker(medId, date, hour, wasTaken)
                 },
                 colors = CheckboxDefaults.colors(checkedColor = PowderedPink)

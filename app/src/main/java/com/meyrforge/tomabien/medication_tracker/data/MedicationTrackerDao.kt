@@ -19,9 +19,12 @@ interface MedicationTrackerDao {
     suspend fun getAllMedicationTrackers(): List<MedicationTrackerEntity>?
 
     @Query("SELECT * FROM medication_tracker_table WHERE date = :date")
-    suspend fun getMedicationTrackerByDate(date: String): MedicationTrackerEntity?
+    suspend fun getMedicationTrackerByDate(date: String): List<MedicationTrackerEntity>?
 
     @Update
     suspend fun updateMedicationTracker(medicationTracker: MedicationTrackerEntity) : Int
+
+    @Query("SELECT * FROM medication_tracker_table WHERE id = :id")
+    suspend fun getMedicationTrackerById(id:Int): MedicationTrackerEntity?
 
 }

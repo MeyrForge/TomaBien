@@ -4,6 +4,7 @@ import android.database.sqlite.SQLiteException
 import android.util.Log
 import com.meyrforge.tomabien.common.RepositoryError
 import com.meyrforge.tomabien.common.Result
+import com.meyrforge.tomabien.medication_tracker.data.entities.MedicationTrackerEntity
 import com.meyrforge.tomabien.medication_tracker.data.entities.toDomain
 import com.meyrforge.tomabien.medication_tracker.data.entities.toEntity
 import com.meyrforge.tomabien.medication_tracker.domain.MedicationTrackerRepository
@@ -50,9 +51,15 @@ class MedicationTrackerRepositoryImpl @Inject constructor(private val medication
         }
     }
 
-    override suspend fun getMedicationTrackerByDate(date: String): Result<MedicationTracker?, RepositoryError> {
+    override suspend fun getMedicationTrackerByDate(date: String): Result<List<MedicationTracker>, RepositoryError> {
         return safeDaoCall {
-            medicationTrackerDao.getMedicationTrackerByDate(date)?.toDomain()
+            medicationTrackerDao.getMedicationTrackerByDate(date)?.map { it.toDomain() } ?: emptyList()
+        }
+    }
+
+    override suspend fun getMedicationTrackerById(id: Int): Result<MedicationTracker?, RepositoryError> {
+        return safeDaoCall {
+            medicationTrackerDao.getMedicationTrackerById(id)?.toDomain()
         }
     }
 }

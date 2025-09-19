@@ -4,8 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meyrforge.tomabien.medication_tracker.domain.MedicationTrackerRepository
 import com.meyrforge.tomabien.medication_tracker.domain.models.MedicationTracker
+import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetAllMedicationTrackerByDateUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetAllMedicationTrackerUseCase
+import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetMedicationTrackerByIdUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.SaveMedicationTrackerUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.UpdateMedicationTrackerUseCase
 import com.meyrforge.tomabien.my_medications.domain.models.MedicationWithAlarmsDomain
@@ -21,7 +24,9 @@ class MedicationTrackerViewModel @Inject constructor(
     private val getAllMedicationsUseCase: GetAllMedicationsUseCase,
     private val getAlarmsUseCase: GetAlarmsUseCase,
     private val updateMedicationTrackerUseCase: UpdateMedicationTrackerUseCase,
-    private val getAllMedicationTrackerUseCase: GetAllMedicationTrackerUseCase
+    private val getAllMedicationTrackerUseCase: GetAllMedicationTrackerUseCase,
+    private val getAllMedicationTrackerByDateUseCase: GetAllMedicationTrackerByDateUseCase,
+    private val getMedicationTrackerByIdUseCase: GetMedicationTrackerByIdUseCase
 ) :
     ViewModel() {
     private val _medicationList = MutableLiveData(emptyList<MedicationWithAlarmsDomain>())
@@ -41,7 +46,7 @@ class MedicationTrackerViewModel @Inject constructor(
 
     fun getAllMedicationTrackers() {
         viewModelScope.launch {
-            _medicationTrackerList.value = getAllMedicationTrackerUseCase()
+            _medicationTrackerList.value = getAllMedicationTrackerByDateUseCase()
         }
     }
 
@@ -50,7 +55,11 @@ class MedicationTrackerViewModel @Inject constructor(
         for (tracker in _wereSaved){
             if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour){
                 viewModelScope.launch {
-                    updateMedicationTrackerUseCase(tracker)
+                    getMedicationTrackerByIdUseCase(medId)?.let {
+                        it.taken = taken
+                        updateMedicationTrackerUseCase(it)
+                        getAllMedicationTrackers()
+                    }
                 }
                 return
             }
@@ -58,7 +67,13 @@ class MedicationTrackerViewModel @Inject constructor(
         for (tracker in _medicationTrackerList.value?:emptyList()){
             if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour){
                 viewModelScope.launch {
-                    updateMedicationTrackerUseCase(tracker)
+                    tracker.id?.let { id ->
+                        getMedicationTrackerByIdUseCase(id)?.let {
+                            it.taken = taken
+                            updateMedicationTrackerUseCase(it)
+                            getAllMedicationTrackers()
+                        }
+                    }
                 }
                 return
             }
@@ -76,6 +91,7 @@ class MedicationTrackerViewModel @Inject constructor(
                         id = it.toInt()
                     )
                 )
+                getAllMedicationTrackers()
             }
         }
     }

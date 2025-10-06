@@ -178,9 +178,12 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun cancelAlarm(requestCode: Int) {
+    private fun cancelAlarm(requestCode: Int, medName: String) {
         val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmReceiver::class.java)
+        intent.putExtra("message", "Alarma de toma para $medName")
+        intent.putExtra("alarm_id", requestCode)
+
 
         val pendingIntentFlags =
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT

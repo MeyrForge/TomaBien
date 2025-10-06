@@ -43,7 +43,7 @@ fun EditMedicationDialog(
     var med = medToEdit
     if (med != null) {
         viewModel.onMedicationNameChange(med.name)
-        viewModel.onMedicationDosageChange(med.dosage)
+        viewModel.onMedicationGrammageChange(med.grammage)
         viewModel.onIsOptionalChange(med.optional)
     }
     var emptyFields by remember { mutableStateOf(false) }
@@ -68,7 +68,7 @@ fun EditMedicationDialog(
             TextButton(
                 onClick = {
                     if (viewModel.medicationName.value.isEmpty() ||
-                        viewModel.medicationDosage.value.isEmpty()
+                        viewModel.medicationGrammage.value.isEmpty()
                     ) {
                         emptyFields = true
                     } else {
@@ -107,7 +107,7 @@ fun EditMedicationDialog(
 @Composable
 fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: Medication?) {
     val medicationName by viewModel.medicationName
-    val medicationDosage by viewModel.medicationDosage
+    val medicationGrammage by viewModel.medicationGrammage
     val isOptional by viewModel.isOptional
     val pattern = remember { Regex("^[0-9,.]+\$") }
 
@@ -118,7 +118,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
         ) {
             Box(
                 modifier = Modifier
-                    .weight(7f)
+                    .weight(6f)
                     .padding(2.dp)
             ) {
                 OutlinedTextField(
@@ -140,17 +140,17 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
             }
             Box(
                 modifier = Modifier
-                    .weight(3f)
+                    .weight(4f)
                     .padding(horizontal = 2.dp)
             ) {
                 OutlinedTextField(
-                    value = medicationDosage,
+                    value = medicationGrammage,
                     onValueChange = {
-                        if (it.isEmpty() || it.matches(pattern)) viewModel.onMedicationDosageChange(
+                        if (it.isEmpty() || it.matches(pattern)) viewModel.onMedicationGrammageChange(
                             it
                         )
                     },
-                    label = { Text("Dosis") },
+                    label = { Text("Gramaje") },
                     colors = OutlinedTextFieldDefaults.colors(
                         unfocusedTextColor = PowderedPink,
                         unfocusedBorderColor = PowderedPink,

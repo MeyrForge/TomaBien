@@ -17,12 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
+import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
@@ -42,7 +46,7 @@ fun SingleMedicationComponent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp, vertical = 12.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -52,10 +56,21 @@ fun SingleMedicationComponent(
                 modifier = Modifier.weight(1f)
             )
             Text(
-                "${med.name} - ${med.dosage}",
+                "${med.name} - ${med.grammage}",
                 fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
                 color = PowderedPink,
                 modifier = Modifier.weight(6f)
+            )
+            Icon(
+                painterResource(id = R.drawable.ic_blister_xml),
+                "Blister",
+                tint = PowderedPink,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable {
+                        onEdit()
+                    }
             )
             Icon(
                 Icons.Outlined.Edit,

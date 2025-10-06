@@ -9,7 +9,8 @@ import com.meyrforge.tomabien.my_medications.domain.models.Medication
 data class MedicationEntity(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "medication_name") val medicationName: String,
-    @ColumnInfo(name = "medication_dosage") val medicationDosage: String,
+    @ColumnInfo(name = "medication_grammage") val medicationGrammage: String,
+    @ColumnInfo(name = "medication_dosage") val medicationDosage: Float,
     @ColumnInfo(name = "optional") val optional: Boolean,
     @ColumnInfo(name = "deleted") val deleted: Boolean
 )
@@ -21,14 +22,16 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             medicationName = name,
             medicationDosage = dosage,
             optional = optional,
-            deleted = deleted
+            deleted = deleted,
+            medicationGrammage = grammage
         )
     } else {
         MedicationEntity(
             medicationName = name,
             medicationDosage = dosage,
             optional = optional,
-            deleted = deleted
+            deleted = deleted,
+            medicationGrammage = grammage
         )
     }
 }
@@ -39,6 +42,7 @@ fun MedicationEntity.toMedication(): Medication{
         name = medicationName,
         dosage = medicationDosage,
         optional = optional,
-        deleted = deleted
+        deleted = deleted,
+        grammage = medicationGrammage
     )
 }

@@ -41,6 +41,9 @@ class MedicationViewModel @Inject constructor(
     private val _medicationDosage = mutableStateOf("")
     val medicationDosage = _medicationDosage
 
+    private val _medicationGrammage = mutableStateOf("")
+    val medicationGrammage = _medicationGrammage
+
     private val _isOptional = mutableStateOf(false)
     val isOptional = _isOptional
 
@@ -63,6 +66,10 @@ class MedicationViewModel @Inject constructor(
 
     }
 
+    fun onMedicationGrammageChange(grammage: String) {
+        _medicationGrammage.value = grammage
+    }
+
     fun onMedicationIdChange(id: Int) {
         _medicationId.intValue = id
     }
@@ -81,18 +88,18 @@ class MedicationViewModel @Inject constructor(
 
     fun saveMedication() {
         if(_medicationName.value.isEmpty() ||
-        _medicationDosage.value.isEmpty()){
+        _medicationGrammage.value.isEmpty()){
             _notificationMessage.value = "Completar los campos"
         }else{
             viewModelScope.launch {
                 val result = saveMedicationUseCase(
                     _medicationName.value,
-                    _medicationDosage.value,
+                    _medicationGrammage.value,
                     _isOptional.value
                 )
                 if (result) {
                     _medicationName.value = ""
-                    _medicationDosage.value = ""
+                    _medicationGrammage.value = ""
                     _isOptional.value = false
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
@@ -114,7 +121,7 @@ class MedicationViewModel @Inject constructor(
 
     fun editMedication() {
         if(_medicationName.value.isEmpty() ||
-            _medicationDosage.value.isEmpty()){
+            _medicationGrammage.value.isEmpty()){
             _notificationMessage.value = "Completar los campos"
         }else {
             viewModelScope.launch {
@@ -122,13 +129,14 @@ class MedicationViewModel @Inject constructor(
                     Medication(
                         medicationId.intValue,
                         medicationName.value,
-                        medicationDosage.value,
+                        _medicationGrammage.value,
+                        1f,
                         isOptional.value
                     )
                 )
                 if (result) {
                     _medicationName.value = ""
-                    _medicationDosage.value = ""
+                    _medicationGrammage.value = ""
                     _isOptional.value = false
                     getAllMedications()
                     _notificationMessage.value = "Medicacion editada"

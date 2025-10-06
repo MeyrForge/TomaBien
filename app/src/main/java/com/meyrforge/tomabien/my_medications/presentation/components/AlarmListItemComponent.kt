@@ -27,7 +27,7 @@ import com.meyrforge.tomabien.ui.theme.pink
 fun AlarmListItemComponent(
     viewModel: MedicationViewModel = hiltViewModel(),
     alarm: Alarm,
-    onCancelAlarm: (requestCode: Int) -> Unit
+    onCancelAlarm: (requestCode: Int, medName: String) -> Unit
 ) {
     val hour = if (alarm.hour.toString().length == 1){ "0"+alarm.hour.toString()} else alarm.hour.toString()
     val minute = if (alarm.minute.toString().length == 1){ "0"+alarm.minute.toString()} else alarm.minute.toString()
@@ -51,7 +51,7 @@ fun AlarmListItemComponent(
                 modifier = Modifier
                     .size(32.dp)
                     .clickable {
-                        onCancelAlarm(alarm.requestCode)
+                        onCancelAlarm(alarm.requestCode, viewModel.medicationName.value)
                         viewModel.deleteAlarm(alarm)
                     }
             )

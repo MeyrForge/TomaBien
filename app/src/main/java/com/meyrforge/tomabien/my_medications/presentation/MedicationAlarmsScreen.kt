@@ -36,7 +36,7 @@ fun MedicationAlarmsScreen(
     viewModel: MedicationViewModel = hiltViewModel(),
     onSetAlarm: (hour: Int, minute: Int, requestCode: Int, medName: String) -> Unit,
     launchPermission: () -> Unit,
-    onCancelAlarm: (Int) -> Unit
+    onCancelAlarm: (Int, String) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     var openAlertDialog by remember { mutableStateOf(false) }

@@ -2,14 +2,16 @@ package com.meyrforge.tomabien.my_medications.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Album
+import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -23,25 +25,28 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.components.EditMedicationDialog
-import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
+import com.meyrforge.tomabien.my_medications.presentation.components.IconExplainedComponent
 import com.meyrforge.tomabien.my_medications.presentation.components.SingleMedicationComponent
+import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
+import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
-import kotlinx.coroutines.flow.StateFlow
 
 @Composable
-fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewModel = hiltViewModel()) {
+fun MyMedicationsScreen(
+    navController: NavController,
+    viewModel: MedicationViewModel = hiltViewModel(),
+) {
     var medicationToEdit by remember { mutableStateOf<Medication?>(null) }
     val medicationList: List<Medication> by viewModel.medicationList.observeAsState(emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
@@ -50,7 +55,7 @@ fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewM
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = {openAlertDialog = true},
+                onClick = { openAlertDialog = true },
                 containerColor = PowderedPink,
                 contentColor = DeepPurple,
                 icon = { Icon(Icons.Outlined.Add, "Agregar") },
@@ -91,36 +96,37 @@ fun MyMedicationsScreen(navController: NavController, viewModel: MedicationViewM
             }
 
             item {
+                Spacer(modifier = Modifier.size(24.dp))
                 Column {
-                    Row(modifier = Modifier.padding(horizontal = 5.dp).padding(top = 30.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Outlined.Album,
-                            "Opcional",
-                            tint = SoftBlueLavander,
-                            modifier = Modifier.weight(1f).size(16.dp)
-                        )
-                        Text(
-                            "Medicación opcional",
-                            fontSize = 16.sp,
-                            color = PowderedPink,
-                            modifier = Modifier.weight(6f)
-                        )
-                    }
-
-                    Row(modifier = Modifier.padding(horizontal = 5.dp).padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            Icons.Outlined.Album,
-                            "No Opcional",
-                            tint = NavBarColor,
-                            modifier = Modifier.weight(1f).size(16.dp)
-                        )
-                        Text(
-                            "Medicación no opcional",
-                            fontSize = 16.sp,
-                            color = PowderedPink,
-                            modifier = Modifier.weight(6f)
-                        )
-                    }
+                    Text(
+                        "Glosario",
+                        fontSize = 18.sp,
+                        color = SoftBlueLavander,
+                        fontWeight = FontWeight.Bold
+                    )
+                    IconExplainedComponent(
+                        Icons.Outlined.Album,
+                        "Medicación opcional",
+                        SoftBlueLavander
+                    )
+                    IconExplainedComponent(
+                        Icons.Outlined.Album,
+                        "Medicación no opcional",
+                        NavBarColor
+                    )
+                    IconExplainedComponent(
+                        Icons.Outlined.Edit, "Editar o eliminar medicación",
+                        LightWarmGray
+                    )
+                    IconExplainedComponent(
+                        Icons.Outlined.Alarm, "Agregar o eliminar alarmas",
+                        SoftBlueLavander
+                    )
+                    IconExplainedComponent(
+                        isBlister = true,
+                        text = "Sección cantidad de pastillas",
+                        tint = PowderedPink
+                    )
                 }
             }
         }

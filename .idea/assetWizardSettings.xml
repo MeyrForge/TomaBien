@@ -315,25 +315,12 @@
                   <entry key="vectorAssetStep">
                     <value>
                       <PersistentState>
-                        <option name="children">
-                          <map>
-                            <entry key="clipartAsset">
-                              <value>
-                                <PersistentState>
-                                  <option name="values">
-                                    <map>
-                                      <entry key="url" value="file:$USER_HOME$/Library/Android/sdk/icons/material/materialsymbolsoutlined/notifications_active/outline_notifications_active_24.xml" />
-                                    </map>
-                                  </option>
-                                </PersistentState>
-                              </value>
-                            </entry>
-                          </map>
-                        </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="986e9a" />
-                            <entry key="outputName" value="outline_notifications_active_24" />
+                            <entry key="outputName" value="ic_blister" />
+                            <entry key="sourceFile" value="D:\Documentos\TomaBien\app\src\main\res\drawable\ic_blister.svg" />
                           </map>
                         </option>
                       </PersistentState>

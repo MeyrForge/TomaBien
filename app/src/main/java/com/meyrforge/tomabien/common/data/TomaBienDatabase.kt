@@ -12,7 +12,7 @@ import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
 
 @Database(
     entities = [MedicationEntity::class, AlarmEntity::class, MedicationTrackerEntity::class],
-    version = 8
+    version = 9
 )
 abstract class TomaBienDatabase : RoomDatabase(){
     abstract fun medicationDao(): MedicationDao
@@ -56,5 +56,13 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
 
         // 3.4. Borrar la tabla antigua
         db.execSQL("DROP TABLE medications_old")
+    }
+}
+
+val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Añade la nueva columna 'number_of_pills' de tipo REAL (Float en SQL)
+        // y establece un valor por defecto de 0.0 para las filas existentes.
+        db.execSQL("ALTER TABLE medication_table ADD COLUMN number_of_pills REAL NOT NULL DEFAULT 0.0")
     }
 }

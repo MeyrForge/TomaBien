@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
+import com.meyrforge.tomabien.my_medications.presentation.components.ChangePillsNumberDialog
 import com.meyrforge.tomabien.my_medications.presentation.components.EditMedicationDialog
 import com.meyrforge.tomabien.my_medications.presentation.components.IconExplainedComponent
 import com.meyrforge.tomabien.my_medications.presentation.components.SingleMedicationComponent
@@ -48,9 +49,11 @@ fun MyMedicationsScreen(
     viewModel: MedicationViewModel = hiltViewModel(),
 ) {
     var medicationToEdit by remember { mutableStateOf<Medication?>(null) }
+    var medicationToNumber by remember { mutableStateOf<Medication?>(null) }
     val medicationList: List<Medication> by viewModel.medicationList.observeAsState(emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
     var openAlertDialog by remember { mutableStateOf(false) }
+    var openPillsDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
@@ -83,6 +86,10 @@ fun MyMedicationsScreen(
                         SingleMedicationComponent(
                             navController = navController,
                             med = med,
+                            onPillsOpened = {
+                                medicationToNumber = med
+                                openPillsDialog = true
+                            },
                             onEdit = {
                                 medicationToEdit = med
                                 openAlertDialog = true
@@ -132,6 +139,11 @@ fun MyMedicationsScreen(
         }
         if (openAlertDialog) {
             EditMedicationDialog(medToEdit = medicationToEdit) { openAlertDialog = false }
+        }
+        if (openPillsDialog) {
+            medicationToNumber?.let {
+                ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
+            }
         }
         LaunchedEffect(medicationList) {
             openAlertDialog = false

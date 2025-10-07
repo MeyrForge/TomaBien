@@ -40,7 +40,8 @@ fun SingleMedicationComponent(
     navController: NavController,
     viewModel: MedicationViewModel = hiltViewModel(),
     med: Medication,
-    onEdit: () -> Unit
+    onEdit: () -> Unit,
+    onPillsOpened: () -> Unit
 ) {
     Column {
         Row(
@@ -69,7 +70,7 @@ fun SingleMedicationComponent(
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        onEdit()
+                        onPillsOpened()
                     }
             )
             Icon(

@@ -12,7 +12,11 @@ data class MedicationEntity(
     @ColumnInfo(name = "medication_grammage") val medicationGrammage: String,
     @ColumnInfo(name = "medication_dosage") val medicationDosage: Float,
     @ColumnInfo(name = "optional") val optional: Boolean,
-    @ColumnInfo(name = "deleted") val deleted: Boolean
+    @ColumnInfo(name = "deleted") val deleted: Boolean,
+    @ColumnInfo(name = "number_of_pills", defaultValue = "0.0") // Añadido defaultValue
+    val numberOfPills: Float = 0.0f, // Añadido el campo con valor por defecto
+
+
 )
 
 fun Medication.toMedicationEntity(): MedicationEntity{
@@ -23,7 +27,8 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             medicationDosage = dosage,
             optional = optional,
             deleted = deleted,
-            medicationGrammage = grammage
+            medicationGrammage = grammage,
+            numberOfPills = numberOfPills
         )
     } else {
         MedicationEntity(
@@ -31,7 +36,8 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             medicationDosage = dosage,
             optional = optional,
             deleted = deleted,
-            medicationGrammage = grammage
+            medicationGrammage = grammage,
+            numberOfPills = numberOfPills
         )
     }
 }
@@ -43,6 +49,7 @@ fun MedicationEntity.toMedication(): Medication{
         dosage = medicationDosage,
         optional = optional,
         deleted = deleted,
-        grammage = medicationGrammage
+        grammage = medicationGrammage,
+        numberOfPills = numberOfPills
     )
 }

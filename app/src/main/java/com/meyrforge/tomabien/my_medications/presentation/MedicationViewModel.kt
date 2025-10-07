@@ -41,6 +41,9 @@ class MedicationViewModel @Inject constructor(
     private val _medicationDosage = mutableStateOf("")
     val medicationDosage = _medicationDosage
 
+    private val _numberOfPills = mutableStateOf("")
+    val numberOfPills = _numberOfPills
+
     private val _medicationGrammage = mutableStateOf("")
     val medicationGrammage = _medicationGrammage
 
@@ -64,6 +67,10 @@ class MedicationViewModel @Inject constructor(
                 getAlarms(it.toInt())
             }
 
+    }
+
+    fun onNumberOfPillsChange(numberOfPills: String) {
+        _numberOfPills.value = numberOfPills
     }
 
     fun onMedicationGrammageChange(grammage: String) {
@@ -188,5 +195,9 @@ class MedicationViewModel @Inject constructor(
             deleteAlarmUseCase(alarm)
             getAlarms(alarm.ownerId)
         }
+    }
+
+    fun saveNumberOfPills(numberOfPills: String){
+        _numberOfPills.value = numberOfPills
     }
 }

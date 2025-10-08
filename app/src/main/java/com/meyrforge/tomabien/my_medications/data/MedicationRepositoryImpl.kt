@@ -114,4 +114,13 @@ class MedicationRepositoryImpl @Inject constructor(private val medicationDao: Me
         }
     }
 
+    override suspend fun updateNumberOfPills(
+        medicationId: Int,
+        numberOfPills: Float,
+    ): Result<Int, RepositoryError> {
+        return safeDaoCall {
+            medicationDao.updateNumberOfPills(medicationId, numberOfPills)
+        }
+    }
+
 }

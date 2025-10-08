@@ -16,5 +16,6 @@ interface MedicationRepository {
     suspend fun deleteAlarm(alarm: Alarm): Result<Int, RepositoryError>
     suspend fun getAlarms(medicationId: Int): Result<MedicationWithAlarmsDomain, RepositoryError>
     suspend fun getMedicationById(medicationId: Int): Result<Medication?, RepositoryError>
+    suspend fun updateNumberOfPills(medicationId: Int, numberOfPills: Float): Result<Int, RepositoryError>
 
 }

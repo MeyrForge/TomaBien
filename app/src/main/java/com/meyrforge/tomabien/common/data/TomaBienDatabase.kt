@@ -12,7 +12,7 @@ import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
 
 @Database(
     entities = [MedicationEntity::class, AlarmEntity::class, MedicationTrackerEntity::class],
-    version = 9
+    version = 10
 )
 abstract class TomaBienDatabase : RoomDatabase(){
     abstract fun medicationDao(): MedicationDao
@@ -21,20 +21,11 @@ abstract class TomaBienDatabase : RoomDatabase(){
 
 val MIGRATION_7_8 = object : Migration(7, 8) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Paso 1: Añadir la nueva columna 'grammage' como TEXT (para Strings)
-        db.execSQL("ALTER TABLE medication_table ADD COLUMN medication_grammage TEXT NOT NULL DEFAULT ''")
-
-        // Paso 2: Copiar los valores de la antigua columna 'dosage' a 'grammage'
-        db.execSQL("UPDATE medication_table SET medication_grammage = medication_dosage")
-
-        // Paso 3: Alterar la tabla para recrear la columna 'dosage' como REAL (Float)
-        // SQLite no tiene un comando 'ALTER COLUMN' directo para cambiar el tipo,
-        // por lo que la forma más segura es recrear la tabla.
-
-        // 3.1. Renombrar la tabla original
+        // Renombrar la tabla original
         db.execSQL("ALTER TABLE medication_table RENAME TO medications_old")
 
-        // 3.2. Crear la nueva tabla con la estructura correcta (copia la definición de tu Entity)
+        // Crear la nueva tabla con la estructura que debería tener en la versión 8
+        // (incluyendo el cambio de tipo de dosage y el grammage)
         db.execSQL("""
             CREATE TABLE medication_table (
                 id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
@@ -46,23 +37,33 @@ val MIGRATION_7_8 = object : Migration(7, 8) {
             )
         """)
 
-        // 3.3. Copiar los datos de la tabla antigua a la nueva, asignando un valor por defecto a 'dosage'
-        // Aquí decidimos que 'dosage' será 0.0f por defecto. Puedes ajustar esto.
+        // Copiar los datos, moviendo 'dosage' a 'grammage' y poniendo un valor por defecto en el nuevo 'dosage'
         db.execSQL("""
             INSERT INTO medication_table (id, medication_name, medication_dosage, medication_grammage, optional, deleted)
-            SELECT id, medication_name, 1.0, medication_grammage, optional, deleted
+            SELECT id, medication_name, 1.0, medication_dosage, optional, deleted
             FROM medications_old
         """)
 
-        // 3.4. Borrar la tabla antigua
+        // Borrar la tabla antigua
         db.execSQL("DROP TABLE medications_old")
     }
 }
 
+// --- MIGRACIÓN 8 -> 9 CORREGIDA ---
+// Esta migración añade la columna number_of_pills con el valor por defecto 0.0
 val MIGRATION_8_9 = object : Migration(8, 9) {
     override fun migrate(db: SupportSQLiteDatabase) {
-        // Añade la nueva columna 'number_of_pills' de tipo REAL (Float en SQL)
-        // y establece un valor por defecto de 0.0 para las filas existentes.
         db.execSQL("ALTER TABLE medication_table ADD COLUMN number_of_pills REAL NOT NULL DEFAULT 0.0")
+    }
+}
+
+// --- MIGRACIÓN 9 -> 10 CORREGIDA ---
+// Esta migración solo actualiza los valores existentes de 0.0 a -1.0
+// La definición de la columna ya existe, solo cambiamos los datos.
+val MIGRATION_9_10 = object : Migration(9, 10) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        // Actualiza las filas existentes que tienen el antiguo valor por defecto (0.0)
+        // al nuevo valor por defecto (-1.0).
+        db.execSQL("UPDATE medication_table SET number_of_pills = -1.0 WHERE number_of_pills = 0.0")
     }
 }

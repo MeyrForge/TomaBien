@@ -53,12 +53,13 @@ fun MyMedicationsScreen(
     val medicationList: List<Medication> by viewModel.medicationList.observeAsState(emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
     var openAlertDialog by remember { mutableStateOf(false) }
+    var openAlertDialogNew by remember { mutableStateOf(false) }
     var openPillsDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(
-                onClick = { openAlertDialog = true },
+                onClick = { openAlertDialogNew = true },
                 containerColor = PowderedPink,
                 contentColor = DeepPurple,
                 icon = { Icon(Icons.Outlined.Add, "Agregar") },
@@ -131,7 +132,7 @@ fun MyMedicationsScreen(
                     )
                     IconExplainedComponent(
                         isBlister = true,
-                        text = "Sección cantidad de pastillas",
+                        text = "Conteo de pastillas",
                         tint = PowderedPink
                     )
                 }
@@ -144,6 +145,9 @@ fun MyMedicationsScreen(
             medicationToNumber?.let {
                 ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
             }
+        }
+        if (openAlertDialogNew){
+            EditMedicationDialog(medToEdit = null) { openAlertDialogNew = false }
         }
         LaunchedEffect(medicationList) {
             openAlertDialog = false

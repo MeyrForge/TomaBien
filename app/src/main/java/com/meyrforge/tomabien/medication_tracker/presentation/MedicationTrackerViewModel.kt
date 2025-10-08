@@ -14,6 +14,7 @@ import com.meyrforge.tomabien.medication_tracker.domain.usecases.UpdateMedicatio
 import com.meyrforge.tomabien.my_medications.domain.models.MedicationWithAlarmsDomain
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
+import com.meyrforge.tomabien.my_medications.domain.usecases.UpdateNumberOfPillsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,9 +25,9 @@ class MedicationTrackerViewModel @Inject constructor(
     private val getAllMedicationsUseCase: GetAllMedicationsUseCase,
     private val getAlarmsUseCase: GetAlarmsUseCase,
     private val updateMedicationTrackerUseCase: UpdateMedicationTrackerUseCase,
-    private val getAllMedicationTrackerUseCase: GetAllMedicationTrackerUseCase,
+    private val updateNumberOfPillsUseCase: UpdateNumberOfPillsUseCase,
     private val getAllMedicationTrackerByDateUseCase: GetAllMedicationTrackerByDateUseCase,
-    private val getMedicationTrackerByIdUseCase: GetMedicationTrackerByIdUseCase
+    private val getMedicationTrackerByIdUseCase: GetMedicationTrackerByIdUseCase,
 ) :
     ViewModel() {
     private val _medicationList = MutableLiveData(emptyList<MedicationWithAlarmsDomain>())
@@ -52,25 +53,59 @@ class MedicationTrackerViewModel @Inject constructor(
 
 
     fun saveOrEditMedicationTracker(medId: Int, date: String, hour: String, taken: Boolean) {
-        for (tracker in _wereSaved){
-            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour){
+        for (tracker in _wereSaved) {
+            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour) {
                 viewModelScope.launch {
                     getMedicationTrackerByIdUseCase(medId)?.let {
                         it.taken = taken
                         updateMedicationTrackerUseCase(it)
+                        val medicationActualNumberOfPills =
+                            medicationList.value?.find { medication ->
+                                medication.medication?.id == medId
+                            }?.medication?.numberOfPills
+                        if (medicationActualNumberOfPills != null && medicationActualNumberOfPills > 1f) {
+                            if (taken) {
+                                updateNumberOfPillsUseCase(
+                                    medId,
+                                    (medicationActualNumberOfPills - 1f)
+                                )
+                            } else {
+                                updateNumberOfPillsUseCase(
+                                    medId,
+                                    medicationActualNumberOfPills + 1f
+                                )
+                            }
+                        }
                         getAllMedicationTrackers()
                     }
                 }
                 return
             }
         }
-        for (tracker in _medicationTrackerList.value?:emptyList()){
-            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour){
+        for (tracker in _medicationTrackerList.value ?: emptyList()) {
+            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour) {
                 viewModelScope.launch {
                     tracker.id?.let { id ->
                         getMedicationTrackerByIdUseCase(id)?.let {
                             it.taken = taken
                             updateMedicationTrackerUseCase(it)
+                            val medicationToChange =
+                                medicationList.value?.find { medication ->
+                                    medication.medication?.id == medId
+                                }?.medication
+                            if (medicationToChange != null && medicationToChange.numberOfPills != -1f) {
+                                if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
+                                    updateNumberOfPillsUseCase(
+                                        medId,
+                                        (medicationToChange.numberOfPills - medicationToChange.dosage)
+                                    )
+                                } else {
+                                    updateNumberOfPillsUseCase(
+                                        medId,
+                                        medicationToChange.numberOfPills + medicationToChange.dosage
+                                    )
+                                }
+                            }
                             getAllMedicationTrackers()
                         }
                     }
@@ -91,6 +126,15 @@ class MedicationTrackerViewModel @Inject constructor(
                         id = it.toInt()
                     )
                 )
+                val medicationToChange = medicationList.value?.find { medication ->
+                    medication.medication?.id == medId
+                }?.medication
+                if (medicationToChange != null && medicationToChange.numberOfPills != 1f && medicationToChange.numberOfPills >= medicationToChange.dosage && taken) {
+                    updateNumberOfPillsUseCase(
+                        medId,
+                        (medicationToChange.numberOfPills - medicationToChange.dosage)
+                    )
+                }
                 getAllMedicationTrackers()
             }
         }
@@ -104,7 +148,7 @@ class MedicationTrackerViewModel @Inject constructor(
             medications?.let {
                 for (medication in medications) {
                     val result = getAlarmsUseCase(medication.id!!)
-                    result?.let{
+                    result?.let {
                         if (it.alarms.isNotEmpty() && !medication.deleted) {
                             medicationsThatHaveAlarms.add(it)
                         }

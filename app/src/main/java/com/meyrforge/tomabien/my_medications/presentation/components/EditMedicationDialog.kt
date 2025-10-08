@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AddCircleOutline
 import androidx.compose.material3.AlertDialog
@@ -18,11 +19,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +48,13 @@ fun EditMedicationDialog(
         viewModel.onMedicationNameChange(med.name)
         viewModel.onMedicationGrammageChange(med.grammage)
         viewModel.onIsOptionalChange(med.optional)
+        if (viewModel.numberOfPills.floatValue == -1.0f){
+            viewModel.onCountActivatedChange(false)
+        }else{
+            viewModel.onCountActivatedChange(true)
+            viewModel.onMedicationDosageChange(med.dosage.toString())
+            viewModel.saveNumberOfPills(med.numberOfPills)
+        }
     }
     var emptyFields by remember { mutableStateOf(false) }
     AlertDialog(
@@ -63,6 +73,7 @@ fun EditMedicationDialog(
         },
         onDismissRequest = {
             onDismiss()
+            viewModel.resetValues()
         },
         confirmButton = {
             TextButton(
@@ -75,10 +86,12 @@ fun EditMedicationDialog(
 
                         if (med == null) {
                             viewModel.saveMedication()
+                            onDismiss()
                         } else {
                             viewModel.onMedicationIdChange(med?.id ?: 0)
                             viewModel.editMedication()
                             med = null
+                            onDismiss()
                         }
                     }
                 }
@@ -90,6 +103,7 @@ fun EditMedicationDialog(
             TextButton(
                 onClick = {
                     onDismiss()
+                    viewModel.resetValues()
                 }
             ) {
                 Text("Cancelar", color = PowderedPink)
@@ -106,10 +120,14 @@ fun EditMedicationDialog(
 
 @Composable
 fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: Medication?) {
+    val notificationMessage by viewModel.notificationMessage.observeAsState()
     val medicationName by viewModel.medicationName
     val medicationGrammage by viewModel.medicationGrammage
     val isOptional by viewModel.isOptional
+    val countActivated by viewModel.countActivated
+    val medicationDosage by viewModel.medicationDosage
     val pattern = remember { Regex("^[0-9,.]+\$") }
+    val patternFloat = remember { Regex("^[0-9.]+\$") }
 
     Column() {
         Row(
@@ -176,7 +194,44 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
             Text("Opcional", fontSize = 18.sp)
             SegmentedButtonComponent(Modifier, isOptional, viewModel::onIsOptionalChange)
         }
-        HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(2.dp)
+        ) {
+            Text("Activar conteo de pastillas", fontSize = 18.sp, modifier = Modifier.weight(5f))
+            SegmentedButtonComponent(Modifier, countActivated, viewModel::onCountActivatedChange)
+        }
+
+        if (countActivated) {
+            OutlinedTextField(
+                value = medicationDosage,
+                onValueChange = {
+                    if (it.isEmpty() || it.matches(patternFloat)) viewModel.onMedicationDosageChange(
+                        it
+                    )
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                label = { Text("Dosis") },
+                colors = OutlinedTextFieldDefaults.colors(
+                    unfocusedTextColor = PowderedPink,
+                    unfocusedBorderColor = PowderedPink,
+                    unfocusedLabelColor = PowderedPink,
+                    unfocusedLeadingIconColor = PowderedPink,
+                    focusedBorderColor = SoftBlueLavander,
+                    focusedLabelColor = SoftBlueLavander,
+                    focusedTextColor = SoftBlueLavander
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+        }
+        HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp, modifier = Modifier.padding(top = 8.dp))
+        notificationMessage?.let {
+            Text(it, color = pink)
+        }
         if (med != null) {
             TextButton({ viewModel.deleteMedication(med) }, contentPadding = PaddingValues(0.dp)) {
                 Text(

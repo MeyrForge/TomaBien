@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
@@ -80,12 +81,21 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
                 }
                 items(trackersForDate.size) { index ->
                     val tracker = trackersForDate[index]
-                     Column(modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)) {
-                        Text("Medicación: ${tracker.medication.name}")
-                        Text("Horario: ${tracker.tracker.hour}")
-                        Text(text =
-                            if (tracker.tracker.taken) "Tomada" else "No tomada"
+                    Column(modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)) {
+                        Text("Medicación: ${tracker.medication.name}", color = Color.White)
+                        if (tracker.medication.numberOfPills != -1f) {
+                            Text("Dosis: ${tracker.medication.dosage}", color = Color.White)
+                            Text("N° de Pastillas: ${tracker.medication.numberOfPills}", color = Color.White)
+                        }
+                        Text("Horario: ${tracker.tracker.hour}", color = Color.White)
+                        Text(
+                            text =
+                                if (tracker.tracker.taken) "Tomada" else "No tomada",
+                            color = Color.White
                         )
+                        if (tracker.medication.numberOfPills == -1f){
+                            Text("Conteo desactivado", color = Color.White)
+                        }
                     }
                 }
             }

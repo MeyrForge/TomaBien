@@ -41,4 +41,8 @@ interface MedicationDao {
     @Delete
     suspend fun deleteAlarm(alarm: AlarmEntity) : Int
 
+    @Query("UPDATE medication_table SET number_of_pills = :numberOfPills WHERE id = :medicationId")
+    suspend fun updateNumberOfPills(medicationId: Int, numberOfPills: Float): Int
+
+
 }

@@ -61,7 +61,7 @@ fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewMode
                                 MedicationTrackerItemComponent(
                                     medWithAlarms.medication?.id ?: 0,
                                     "$hour:$minute",
-                                    "${medWithAlarms.medication?.name} ${medWithAlarms.medication?.dosage}"
+                                    "${medWithAlarms.medication?.name} ${medWithAlarms.medication?.grammage}"
                                 )
                             }
                         }

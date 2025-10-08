@@ -11,10 +11,10 @@ data class MedicationEntity(
     @ColumnInfo(name = "medication_name") val medicationName: String,
     @ColumnInfo(name = "medication_grammage") val medicationGrammage: String,
     @ColumnInfo(name = "medication_dosage") val medicationDosage: Float,
+    @ColumnInfo(name = "number_of_pills", defaultValue = "-1.0")
+    val numberOfPills: Float = -1.0f,
     @ColumnInfo(name = "optional") val optional: Boolean,
     @ColumnInfo(name = "deleted") val deleted: Boolean,
-    @ColumnInfo(name = "number_of_pills", defaultValue = "0.0") // Añadido defaultValue
-    val numberOfPills: Float = 0.0f, // Añadido el campo con valor por defecto
 
 
 )

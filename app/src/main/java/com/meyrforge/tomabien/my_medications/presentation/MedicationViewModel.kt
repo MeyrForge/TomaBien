@@ -1,5 +1,6 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
@@ -17,6 +18,7 @@ import com.meyrforge.tomabien.my_medications.domain.usecases.EditMedicationUseCa
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.SaveMedicationUseCase
+import com.meyrforge.tomabien.my_medications.domain.usecases.UpdateNumberOfPillsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,7 +31,8 @@ class MedicationViewModel @Inject constructor(
     private val editMedicationUseCase: EditMedicationUseCase,
     private val getAlarmsUseCase: GetAlarmsUseCase,
     private val addAlarmUseCase: AddAlarmUseCase,
-    private val deleteAlarmUseCase: DeleteAlarmUseCase
+    private val deleteAlarmUseCase: DeleteAlarmUseCase,
+    private val updateNumberOfPillsUseCase: UpdateNumberOfPillsUseCase,
 ) :
     ViewModel() {
     private val _medicationId = mutableIntStateOf(0)
@@ -41,7 +44,7 @@ class MedicationViewModel @Inject constructor(
     private val _medicationDosage = mutableStateOf("")
     val medicationDosage = _medicationDosage
 
-    private val _numberOfPills = mutableStateOf("")
+    private val _numberOfPills = mutableFloatStateOf(0f)
     val numberOfPills = _numberOfPills
 
     private val _medicationGrammage = mutableStateOf("")
@@ -49,6 +52,9 @@ class MedicationViewModel @Inject constructor(
 
     private val _isOptional = mutableStateOf(false)
     val isOptional = _isOptional
+
+    private val _countActivated = mutableStateOf(false)
+    val countActivated = _countActivated
 
     private val _medicationList = MutableLiveData(emptyList<Medication>())
     val medicationList = _medicationList
@@ -69,8 +75,12 @@ class MedicationViewModel @Inject constructor(
 
     }
 
-    fun onNumberOfPillsChange(numberOfPills: String) {
-        _numberOfPills.value = numberOfPills
+    fun onCountActivatedChange(countActivated: Boolean) {
+        _countActivated.value = countActivated
+    }
+
+    fun onNumberOfPillsChange(numberOfPills: Float) {
+        _numberOfPills.floatValue = numberOfPills
     }
 
     fun onMedicationGrammageChange(grammage: String) {
@@ -94,20 +104,35 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun saveMedication() {
-        if(_medicationName.value.isEmpty() ||
-        _medicationGrammage.value.isEmpty()){
+        if (_medicationName.value.isEmpty() ||
+            _medicationGrammage.value.isEmpty()
+        ) {
             _notificationMessage.value = "Completar los campos"
-        }else{
+        } else {
+            if (_countActivated.value && _medicationDosage.value.isEmpty()) {
+                _notificationMessage.value = "Completar los campos"
+                return
+            }
+            if (_countActivated.value) {
+                _numberOfPills.floatValue = 0f
+            } else {
+                _numberOfPills.floatValue = -1f
+            }
             viewModelScope.launch {
                 val result = saveMedicationUseCase(
                     _medicationName.value,
                     _medicationGrammage.value,
-                    _isOptional.value
+                    _isOptional.value,
+                    _medicationDosage.value.toFloatOrNull() ?: -1f,
+                    _numberOfPills.floatValue
+
                 )
                 if (result) {
                     _medicationName.value = ""
                     _medicationGrammage.value = ""
                     _isOptional.value = false
+                    _medicationDosage.value = ""
+                    _countActivated.value = false
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
                 } else {
@@ -127,24 +152,37 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun editMedication() {
-        if(_medicationName.value.isEmpty() ||
-            _medicationGrammage.value.isEmpty()){
+        if (_medicationName.value.isEmpty() ||
+            _medicationGrammage.value.isEmpty()
+        ) {
             _notificationMessage.value = "Completar los campos"
-        }else {
+        } else {
+            if (_countActivated.value && _medicationDosage.value.isEmpty()) {
+                _notificationMessage.value = "Completar los campos"
+                return
+            }
+            if (_countActivated.value) {
+                _numberOfPills.floatValue = 0f
+            } else {
+                _numberOfPills.floatValue = -1f
+            }
             viewModelScope.launch {
                 val result = editMedicationUseCase(
                     Medication(
                         medicationId.intValue,
                         medicationName.value,
                         _medicationGrammage.value,
-                        1f,
-                        isOptional.value
+                        medicationDosage.value.toFloatOrNull() ?: -1f,
+                        isOptional.value,
+                        numberOfPills.floatValue
                     )
                 )
                 if (result) {
                     _medicationName.value = ""
                     _medicationGrammage.value = ""
                     _isOptional.value = false
+                    _medicationDosage.value = ""
+                    _countActivated.value = false
                     getAllMedications()
                     _notificationMessage.value = "Medicacion editada"
                 } else {
@@ -175,14 +213,15 @@ class MedicationViewModel @Inject constructor(
             val result =
                 addAlarmUseCase(requestCode, hour, minute, medicationId.intValue)
             if (!result)
-                _notificationMessage.value = "Ocurrio un error" else getAlarms(medicationId.intValue)
+                _notificationMessage.value =
+                    "Ocurrio un error" else getAlarms(medicationId.intValue)
         }
     }
 
     private fun getAlarms(medicationId: Int) {
         viewModelScope.launch {
             val result = getAlarmsUseCase(medicationId)
-            result?.let{
+            result?.let {
                 _alarms.value = it.alarms
                 _medicationName.value = it.medication?.name ?: "Sin nombre"
 
@@ -190,14 +229,35 @@ class MedicationViewModel @Inject constructor(
         }
     }
 
-    fun deleteAlarm(alarm: Alarm){
+    fun deleteAlarm(alarm: Alarm) {
         viewModelScope.launch {
             deleteAlarmUseCase(alarm)
             getAlarms(alarm.ownerId)
         }
     }
 
-    fun saveNumberOfPills(numberOfPills: String){
-        _numberOfPills.value = numberOfPills
+    fun saveNumberOfPills(numberOfPills: Float) {
+        _numberOfPills.floatValue = numberOfPills
+    }
+
+    fun resetValues() {
+        _medicationName.value = ""
+        _medicationGrammage.value = ""
+        _isOptional.value = false
+        _medicationDosage.value = ""
+        _countActivated.value = false
+    }
+
+    fun updateNumberOfPills(medicationId: Int, numberOfPills: Float) {
+        viewModelScope.launch {
+            val result = updateNumberOfPillsUseCase(medicationId, numberOfPills)
+            if (!result) {
+                _notificationMessage.value = "Ocurrió un error"
+            } else {
+                _numberOfPills.floatValue = numberOfPills
+                getAllMedications()
+                _notificationMessage.value = "Número de pastillas actualizado"
+            }
+        }
     }
 }

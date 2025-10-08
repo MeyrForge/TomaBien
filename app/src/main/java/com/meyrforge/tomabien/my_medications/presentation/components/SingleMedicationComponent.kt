@@ -1,6 +1,7 @@
 package com.meyrforge.tomabien.my_medications.presentation.components
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ fun SingleMedicationComponent(
     onEdit: () -> Unit,
     onPillsOpened: () -> Unit
 ) {
+    val context = LocalContext.current
     Column {
         Row(
             modifier = Modifier
@@ -66,11 +69,17 @@ fun SingleMedicationComponent(
             Icon(
                 painterResource(id = R.drawable.ic_blister_xml),
                 "Blister",
-                tint = PowderedPink,
+                tint = if (med.numberOfPills == -1f) NavBarColor else PowderedPink,
                 modifier = Modifier
                     .weight(1f)
                     .clickable {
-                        onPillsOpened()
+                        if (med.numberOfPills == -1f) {
+                            Toast.makeText(
+                                context,
+                                "Conteo de pastillas desactivado",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }else{ onPillsOpened()}
                     }
             )
             Icon(

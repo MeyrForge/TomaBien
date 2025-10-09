@@ -11,6 +11,7 @@ import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetAllMedicatio
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetMedicationTrackerByIdUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.SaveMedicationTrackerUseCase
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.UpdateMedicationTrackerUseCase
+import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.domain.models.MedicationWithAlarmsDomain
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
@@ -39,7 +40,6 @@ class MedicationTrackerViewModel @Inject constructor(
     private val _medicationTrackerList = MutableLiveData(emptyList<MedicationTracker>())
     val medicationTrackerList: LiveData<List<MedicationTracker>?> = _medicationTrackerList
 
-
     init {
         getMedicationWithAlarms()
         getAllMedicationTrackers()
@@ -59,20 +59,20 @@ class MedicationTrackerViewModel @Inject constructor(
                     getMedicationTrackerByIdUseCase(medId)?.let {
                         it.taken = taken
                         updateMedicationTrackerUseCase(it)
-                        val medicationActualNumberOfPills =
+                        val medicationToChange =
                             medicationList.value?.find { medication ->
                                 medication.medication?.id == medId
-                            }?.medication?.numberOfPills
-                        if (medicationActualNumberOfPills != null && medicationActualNumberOfPills > 1f) {
-                            if (taken) {
+                            }?.medication
+                        if (medicationToChange != null && medicationToChange.numberOfPills != -1f) {
+                            if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
                                 updateNumberOfPillsUseCase(
                                     medId,
-                                    (medicationActualNumberOfPills - 1f)
+                                    (medicationToChange.numberOfPills - medicationToChange.dosage)
                                 )
                             } else {
                                 updateNumberOfPillsUseCase(
                                     medId,
-                                    medicationActualNumberOfPills + 1f
+                                    medicationToChange.numberOfPills + medicationToChange.dosage
                                 )
                             }
                         }
@@ -141,7 +141,7 @@ class MedicationTrackerViewModel @Inject constructor(
     }
 
 
-    private fun getMedicationWithAlarms() {
+    fun getMedicationWithAlarms() {
         viewModelScope.launch {
             val medications = getAllMedicationsUseCase()
             val medicationsThatHaveAlarms = mutableListOf<MedicationWithAlarmsDomain>()
@@ -158,4 +158,5 @@ class MedicationTrackerViewModel @Inject constructor(
             _medicationList.value = medicationsThatHaveAlarms
         }
     }
+
 }

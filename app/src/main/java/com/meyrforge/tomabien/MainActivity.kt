@@ -65,11 +65,13 @@ import com.meyrforge.tomabien.ui.theme.TomaBienTheme
 import com.meyrforge.tomabien.weekly_summary.presentation.WeeklySummaryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val medicationTrackerViewModel: MedicationTrackerViewModel by viewModels()
-
+    @Inject
+    lateinit var alarmManager: AlarmManager
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -217,16 +219,18 @@ class MainActivity : ComponentActivity() {
                 set(Calendar.HOUR_OF_DAY, hour)
                 set(Calendar.MINUTE, minute)
                 set(Calendar.SECOND, 0)
-//                // If the set time is in the past, advance to the next day
-//                if (timeInMillis <= System.currentTimeMillis()) {
-//                    add(Calendar.DAY_OF_YEAR, 1)
-//                }
+                set(Calendar.MILLISECOND, 0)
+
+                if (timeInMillis <= System.currentTimeMillis()) {
+                    add(Calendar.DAY_OF_YEAR, 1)
+                }
             }
 
-            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-            val intent = Intent(this, AlarmReceiver::class.java)
-            intent.putExtra("message", "Alarma de toma para $medName")
-            intent.putExtra("alarm_id", requestCode)
+            //val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, AlarmReceiver::class.java).apply {
+                putExtra("message", "¡Hora de tu medicina! Es momento de tomar $medName.")
+                putExtra("alarm_id", requestCode)
+            }
 
             val pendingIntentFlags =
                 PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
@@ -234,18 +238,20 @@ class MainActivity : ComponentActivity() {
                 PendingIntent.getBroadcast(this, requestCode, intent, pendingIntentFlags)
 
             try {
-                alarmManager.setRepeating(
+                alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
-                Toast.makeText(this, "Alarma colocada exitósamente para $hour:$minute", Toast.LENGTH_LONG)
+                val hourFormatted = if (hour.toString().length == 1){ "0$hour"} else hour.toString()
+                val minuteFormatted = if (minute.toString().length == 1){ "0$minute"} else minute.toString()
+                Toast.makeText(this, "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días.", Toast.LENGTH_LONG)
                     .show()
             } catch (e: SecurityException) {
                 Toast.makeText(
                     this,
-                    "El permiso para mostrar notificaciones no fue otorgado",
+                    "Se requiere un permiso especial para programar alarmas exactas.",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -259,10 +265,11 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun cancelAlarm(requestCode: Int, medName: String) {
-        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
-        intent.putExtra("message", "Alarma de toma para $medName")
-        intent.putExtra("alarm_id", requestCode)
+        //val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val intent = Intent(this, AlarmReceiver::class.java).apply {
+            putExtra("message", "¡Hora de tu medicina! Es momento de tomar $medName.")
+            putExtra("alarm_id", requestCode)
+        }
 
 
         val pendingIntentFlags =

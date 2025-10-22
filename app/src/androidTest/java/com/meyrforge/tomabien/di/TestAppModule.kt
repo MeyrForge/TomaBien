@@ -3,10 +3,6 @@ package com.meyrforge.tomabien.di
 import android.app.AlarmManager
 import android.content.Context
 import androidx.room.Room
-import androidx.room.migration.AutoMigrationSpec
-import com.meyrforge.tomabien.common.data.MIGRATION_7_8
-import com.meyrforge.tomabien.common.data.MIGRATION_8_9
-import com.meyrforge.tomabien.common.data.MIGRATION_9_10
 import com.meyrforge.tomabien.common.data.TomaBienDatabase
 import com.meyrforge.tomabien.medication_tracker.data.MedicationTrackerDao
 import com.meyrforge.tomabien.medication_tracker.data.MedicationTrackerRepositoryImpl
@@ -16,22 +12,30 @@ import com.meyrforge.tomabien.my_medications.data.MedicationRepositoryImpl
 import com.meyrforge.tomabien.my_medications.domain.MedicationRepository
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
+import org.mockito.Mockito.mock
 import javax.inject.Singleton
 
-private const val DATABASE_NAME = "tomabien_database"
 
 @Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [AppModule::class]
+)
+object TestAppModule {
+
+    @Provides
+    @Singleton
+    fun provideAlarmManager(): AlarmManager {
+        return mock()
+    }
 
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, TomaBienDatabase::class.java, DATABASE_NAME)
-            .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+        Room.inMemoryDatabaseBuilder(context, TomaBienDatabase::class.java)
             .build()
 
     @Provides
@@ -50,11 +54,4 @@ object AppModule {
     fun provideMedicationTrackerRepository(medicationTrackerDao: MedicationTrackerDao): MedicationTrackerRepository {
         return MedicationTrackerRepositoryImpl(medicationTrackerDao)
     }
-
-    @Provides
-    @Singleton
-    fun provideAlarmManager(@ApplicationContext context: Context): AlarmManager {
-        return context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    }
-
 }

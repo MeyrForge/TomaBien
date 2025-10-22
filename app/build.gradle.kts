@@ -17,7 +17,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.meyrforge.tomabien.HiltTestRunner"
     }
 
     buildTypes {
@@ -71,4 +71,18 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
+
+    //TEST
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation (libs.hilt.android.testing)
+    kspAndroidTest (libs.hilt.compiler)
+    androidTestImplementation (libs.mockito.android)
+    androidTestImplementation (libs.mockito.kotlin.v540)
+    androidTestImplementation (libs.androidx.rules)
+
+
+
 }

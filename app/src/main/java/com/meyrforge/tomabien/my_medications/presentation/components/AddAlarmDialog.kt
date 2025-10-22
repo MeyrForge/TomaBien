@@ -18,8 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.meyrforge.tomabien.common.TestTags
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
@@ -50,6 +52,7 @@ fun AddAlarmDialog(
         onDismissRequest = { onDismiss() },
         confirmButton = {
             TextButton(
+                modifier = Modifier.testTag(TestTags.ADD_ALARM),
                 onClick = {
                     viewModel.addAlarm(
                         code,

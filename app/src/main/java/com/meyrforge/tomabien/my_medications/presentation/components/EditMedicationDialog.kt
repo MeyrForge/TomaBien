@@ -25,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.ui.theme.pink
+import com.meyrforge.tomabien.common.TestTags
 
 @Composable
 fun EditMedicationDialog(
@@ -77,6 +79,7 @@ fun EditMedicationDialog(
         },
         confirmButton = {
             TextButton(
+                modifier = Modifier.testTag(TestTags.ADD_NEW_MEDICATION),
                 onClick = {
                     if (viewModel.medicationName.value.isEmpty() ||
                         viewModel.medicationGrammage.value.isEmpty()
@@ -153,7 +156,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                         focusedTextColor = SoftBlueLavander
                     ),
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth().testTag(TestTags.NEW_MEDICATION_NAME)
                 )
             }
             Box(
@@ -179,7 +182,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                         focusedTextColor = SoftBlueLavander
                     ),
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth().testTag(TestTags.NEW_MEDICATION_GRAMMAGE)
                 )
             }
         }

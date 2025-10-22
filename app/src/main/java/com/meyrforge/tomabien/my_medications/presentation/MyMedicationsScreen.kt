@@ -62,7 +62,7 @@ fun MyMedicationsScreen(
                 onClick = { openAlertDialogNew = true },
                 containerColor = PowderedPink,
                 contentColor = DeepPurple,
-                icon = { Icon(Icons.Outlined.Add, "Agregar") },
+                icon = { Icon(Icons.Outlined.Add, "Agregar medicación") },
                 text = {
                     Text("Agregar medicación")
                 })

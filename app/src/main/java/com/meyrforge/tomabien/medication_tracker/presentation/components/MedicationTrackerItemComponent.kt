@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -74,7 +75,8 @@ fun MedicationTrackerItemComponent(
                     wasTaken = it
                     viewModel.saveOrEditMedicationTracker(medId, date, hour, wasTaken)
                 },
-                colors = CheckboxDefaults.colors(checkedColor = PowderedPink)
+                colors = CheckboxDefaults.colors(checkedColor = PowderedPink),
+
             )
         }
         HorizontalDivider(thickness = 2.dp, color = SoftBlueLavander)

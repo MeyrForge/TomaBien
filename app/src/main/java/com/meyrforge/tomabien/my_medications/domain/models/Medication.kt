@@ -6,6 +6,6 @@ data class Medication(
     val grammage: String,
     val dosage: Float,
     val optional: Boolean,
-    val numberOfPills: Float = -1.0f,
+    var numberOfPills: Float = -1.0f,
     var taken: Boolean = false,
     var deleted: Boolean = false)

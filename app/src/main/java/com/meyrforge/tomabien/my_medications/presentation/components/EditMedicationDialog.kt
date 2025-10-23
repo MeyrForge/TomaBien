@@ -195,7 +195,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 .padding(2.dp)
         ) {
             Text("Opcional", fontSize = 18.sp)
-            SegmentedButtonComponent(Modifier, isOptional, viewModel::onIsOptionalChange)
+            SegmentedButtonComponent(Modifier.testTag(TestTags.OPTIONAL_CHECK), isOptional, viewModel::onIsOptionalChange)
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -205,7 +205,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 .padding(2.dp)
         ) {
             Text("Activar conteo de pastillas", fontSize = 18.sp, modifier = Modifier.weight(5f))
-            SegmentedButtonComponent(Modifier, countActivated, viewModel::onCountActivatedChange)
+            SegmentedButtonComponent(Modifier.testTag(TestTags.ACTIVATE_PILL_CHECK), countActivated, viewModel::onCountActivatedChange)
         }
 
         if (countActivated) {

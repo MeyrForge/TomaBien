@@ -21,13 +21,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.R
+import com.meyrforge.tomabien.common.TestTags
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.DeepPurple
@@ -61,7 +65,8 @@ fun ChangePillsNumberDialog( viewModel: MedicationViewModel = hiltViewModel(), m
                 val finalValue = currentPillsValue.toFloatOrNull() ?: 0f
                 viewModel.updateNumberOfPills(medication.id ?: 0, finalValue)
                 onDismiss()
-            }) {
+            },
+                modifier = Modifier.testTag(TestTags.SAVE_PILL_AMOUNT)) {
                 Text("Guardar", color = PowderedPink)
             }
         },
@@ -93,7 +98,7 @@ fun PillDialogContent(initialValue: Float, onValueChange: (String) -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(textValue.ifEmpty { "0" }, fontSize = 40.sp, color = SoftBlueLavander)
+        Text(textValue.ifEmpty { "0" }, fontSize = 40.sp, color = SoftBlueLavander, modifier = Modifier.semantics{contentDescription = "Cantidad de pastillas actual"})
         Text(if (textValue == "1") "Pastilla" else "Pastillas", color = PowderedPink)
         HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp, modifier = Modifier.padding(vertical = 20.dp))
         TextField(

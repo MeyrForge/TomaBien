@@ -1,6 +1,7 @@
 package com.meyrforge.tomabien.medication_tracker.presentation
 
 import android.Manifest
+import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
@@ -42,39 +43,29 @@ class TrackerEndToEndTest {
     @Before
     fun setUp() {
         hiltRule.inject()
-        /*composeRule.setContent {
-            TomaBienTheme {
-                val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = Screen.MyMedications.route
-                ) {
-                    composable(route = Screen.MyMedications.route) {
-                        MyMedicationsScreen(navController)
-                    }
-                    composable(route = Screen.MedicationTracker.route) {
-                        MedicationTrackerScreen()
-                    }
-                    composable(route = Screen.Alarms.route + "/{${Constants.MEDICATION_ID}}") {
-                        MedicationAlarmsScreen(
-                            onSetAlarm = {_, _, _, _ -> }, onCancelAlarm = {_, _ -> },
-                            launchPermission = {}
-                        )
-                    }
-                    composable(route = Screen.WeeklySummary.route) {
-                        WeeklySummaryScreen()
-                    }
-                }
-            }
-        }*/
+        composeRule.onNodeWithContentDescription("Agregar medicación").performClick()
+        composeRule.onNodeWithTag(TestTags.NEW_MEDICATION_NAME).performTextInput("Ibuprofeno")
+        composeRule.onNodeWithTag(TestTags.NEW_MEDICATION_GRAMMAGE).performTextInput("600")
+        composeRule.onNodeWithTag(TestTags.OPTIONAL_CHECK).performClick()
+        composeRule.onNodeWithTag(TestTags.ACTIVATE_PILL_CHECK).performClick()
+
+        composeRule.onNodeWithText("Dosis").assertExists()
+
+        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
+        composeRule.onNodeWithTag(TestTags.ADD_NEW_MEDICATION).performClick()
+
+        composeRule.onNodeWithText("Ibuprofeno - 600").assertExists()
+
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
+
+        composeRule.onNodeWithText("Nueva cantidad").performTextInput("20.5")
+        composeRule.onNodeWithTag(TestTags.SAVE_PILL_AMOUNT).performClick()
     }
 
     @Test
     fun checkAndUncheckTrackerMultipleTimes_checkSummaryAfterwards(){
-        composeRule.onNodeWithContentDescription("Agregar medicación").performClick()
-        composeRule.onNodeWithTag(TestTags.NEW_MEDICATION_NAME).performTextInput("Ibuprofeno")
-        composeRule.onNodeWithTag(TestTags.NEW_MEDICATION_GRAMMAGE).performTextInput("600")
-        composeRule.onNodeWithTag(TestTags.ADD_NEW_MEDICATION).performClick()
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
@@ -83,5 +74,39 @@ class TrackerEndToEndTest {
 
         composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
 
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+
+        composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("No tomada").assertExists()
+
+    }
+
+    @Test
+    fun checkTrackerMultipleTimes_PillCountShouldNotExtractDosage(){
+        composeRule.onNodeWithContentDescription("Alarma").performClick()
+        composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
+
+        composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
+
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+
+        composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("No tomada").assertExists()
+
+        composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("20.5")
     }
 }

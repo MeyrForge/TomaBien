@@ -69,11 +69,17 @@ class MedicationTrackerViewModel @Inject constructor(
                                     medId,
                                     (medicationToChange.numberOfPills - medicationToChange.dosage)
                                 )
+                                medicationList.value?.find { medication ->
+                                    medication.medication?.id == medId
+                                }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
                             } else {
                                 updateNumberOfPillsUseCase(
                                     medId,
                                     medicationToChange.numberOfPills + medicationToChange.dosage
                                 )
+                                medicationList.value?.find { medication ->
+                                    medication.medication?.id == medId
+                                }?.medication?.let { med -> med.numberOfPills += medicationToChange.dosage }
                             }
                         }
                         getAllMedicationTrackers()
@@ -99,11 +105,17 @@ class MedicationTrackerViewModel @Inject constructor(
                                         medId,
                                         (medicationToChange.numberOfPills - medicationToChange.dosage)
                                     )
+                                    medicationList.value?.find { medication ->
+                                        medication.medication?.id == medId
+                                    }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
                                 } else {
                                     updateNumberOfPillsUseCase(
                                         medId,
                                         medicationToChange.numberOfPills + medicationToChange.dosage
                                     )
+                                    medicationList.value?.find { medication ->
+                                        medication.medication?.id == medId
+                                    }?.medication?.let { med -> med.numberOfPills += medicationToChange.dosage }
                                 }
                             }
                             getAllMedicationTrackers()
@@ -134,6 +146,9 @@ class MedicationTrackerViewModel @Inject constructor(
                         medId,
                         (medicationToChange.numberOfPills - medicationToChange.dosage)
                     )
+                    medicationList.value?.find { medication ->
+                        medication.medication?.id == medId
+                    }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
                 }
                 getAllMedicationTrackers()
             }

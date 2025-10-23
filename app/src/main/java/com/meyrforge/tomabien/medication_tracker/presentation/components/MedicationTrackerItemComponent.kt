@@ -17,9 +17,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.meyrforge.tomabien.common.TestTags
 import com.meyrforge.tomabien.common.getDayOfWeek
 import com.meyrforge.tomabien.common.getMonth
 import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerViewModel
@@ -76,7 +79,7 @@ fun MedicationTrackerItemComponent(
                     viewModel.saveOrEditMedicationTracker(medId, date, hour, wasTaken)
                 },
                 colors = CheckboxDefaults.colors(checkedColor = PowderedPink),
-
+                modifier = Modifier.testTag(TestTags.TRACKER_CHECK)
             )
         }
         HorizontalDivider(thickness = 2.dp, color = SoftBlueLavander)

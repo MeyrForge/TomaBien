@@ -68,7 +68,7 @@ fun SingleMedicationComponent(
             )
             Icon(
                 painterResource(id = R.drawable.ic_blister_xml),
-                "Blister",
+                "Conteo de Pastillas",
                 tint = if (med.numberOfPills == -1f) NavBarColor else PowderedPink,
                 modifier = Modifier
                     .weight(1f)

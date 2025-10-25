@@ -41,14 +41,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.meyrforge.tomabien.common.Constants
 import com.meyrforge.tomabien.common.Screen
@@ -127,16 +129,16 @@ class MainActivity : ComponentActivity() {
                                 MyMedicationsScreen(navController)
                             }
                             composable(route = Screen.Alarms.route + "/{${Constants.MEDICATION_ID}}") {
-                                MedicationAlarmsScreen(
+                                MedicationAlarmsScreen(navController = navController,
                                     onSetAlarm = ::setAlarm, onCancelAlarm = ::cancelAlarm,
                                     launchPermission = { permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
                                 )
                             }
                             composable(route = Screen.MedicationTracker.route) {
-                                MedicationTrackerScreen()
+                                MedicationTrackerScreen(navController = navController)
                             }
                             composable(route = Screen.WeeklySummary.route) {
-                                WeeklySummaryScreen()
+                                WeeklySummaryScreen(navController = navController)
                             }
                         }
 
@@ -284,14 +286,17 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NavigationBarComponent(navController: NavController) {
-    var screen by remember { mutableStateOf(Screen.MyMedications.route) }
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+
     NavigationBar(
         modifier = Modifier.clip(RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp)),
         containerColor = NavBarColor
     ) {
+        val trackerScreen = Screen.MedicationTracker
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.AddTask, "Seguimiento") },
-            selected = screen == Screen.MedicationTracker.route,
+            selected = currentDestination?.hierarchy?.any { it.route == trackerScreen.route } == true,
             label = { Text("Seguimiento") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -300,15 +305,19 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if (screen != Screen.MedicationTracker.route) {
-                    screen = Screen.MedicationTracker.route
-                    navController.navigate(Screen.MedicationTracker.route)
+                navController.navigate(trackerScreen.route) {
+                 popUpTo(navController.graph.findStartDestination().id) {
+                    saveState = true
                 }
+                launchSingleTop = true
+                restoreState = true
+            }
             })
 
+        val summaryScreen = Screen.WeeklySummary
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.Summarize, "Resumen") },
-            selected = screen == Screen.WeeklySummary.route,
+            selected = currentDestination?.hierarchy?.any { it.route == summaryScreen.route } == true,
             label = { Text("Resumen de Toma") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -317,15 +326,19 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if (screen != Screen.WeeklySummary.route) {
-                    screen = Screen.WeeklySummary.route
-                    navController.navigate(Screen.WeeklySummary.route)
+                navController.navigate(summaryScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
             })
 
+        val myMedsScreen = Screen.MyMedications
         NavigationBarItem(
             icon = { Icon(Icons.Outlined.Medication, "Mis Medicaciones") },
-            selected = screen == Screen.MyMedications.route,
+            selected = currentDestination?.hierarchy?.any { it.route == myMedsScreen.route } == true,
             label = { Text("Mis medicaciones") },
             colors = NavigationBarItemDefaults.colors(
                 unselectedIconColor = PowderedPink,
@@ -334,9 +347,12 @@ fun NavigationBarComponent(navController: NavController) {
                 selectedTextColor = SoftBlueLavander
             ),
             onClick = {
-                if (screen != Screen.MyMedications.route) {
-                    screen = Screen.MyMedications.route
-                    navController.navigate(Screen.MyMedications.route)
+                navController.navigate(myMedsScreen.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
             })
     }

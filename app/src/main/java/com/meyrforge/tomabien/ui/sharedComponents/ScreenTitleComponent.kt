@@ -28,7 +28,7 @@ fun ScreenTitleComponent(text: String = "Titulo") {
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(horizontal = 8.dp)
             .padding(bottom = 24.dp)
             .background(PowderedPink.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
             .padding(16.dp)

@@ -1,9 +1,13 @@
 package com.meyrforge.tomabien.medication_tracker.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowBackIosNew
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -16,16 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.R.string
 import com.meyrforge.tomabien.medication_tracker.presentation.components.MedicationTrackerItemComponent
 import com.meyrforge.tomabien.ui.sharedComponents.DateComponent
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
+import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.pink
 
 @Composable
-fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewModel()) {
+fun MedicationTrackerScreen(viewModel: MedicationTrackerViewModel = hiltViewModel(), navController: NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     val list by viewModel.medicationList.observeAsState()
     Scaffold(

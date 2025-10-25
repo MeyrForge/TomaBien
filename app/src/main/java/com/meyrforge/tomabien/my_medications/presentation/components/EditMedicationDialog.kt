@@ -230,7 +230,9 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 modifier = Modifier
                     .fillMaxWidth()
             )
+            Text("Más tarde, agregá la cantidad de pastillas que tengas apretando el ícono de blister", color = SoftBlueLavander, modifier = Modifier.padding(4.dp))
         }
+
         HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp, modifier = Modifier.padding(top = 8.dp))
         notificationMessage?.let {
             Text(it, color = pink)

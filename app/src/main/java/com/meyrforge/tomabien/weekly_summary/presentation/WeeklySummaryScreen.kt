@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
@@ -26,7 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel()) {
+fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), navController : NavController) {
     val snackbarHostState = remember { SnackbarHostState() }
     val trackerWithMedList by viewModel.trackerWithMedicationList.observeAsState()
 

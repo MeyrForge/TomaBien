@@ -40,23 +40,19 @@ class TrackerEndToEndTest {
         composeRule.onNodeWithTag(TestTags.OPTIONAL_CHECK).performClick()
         composeRule.onNodeWithTag(TestTags.ACTIVATE_PILL_CHECK).performClick()
 
-        composeRule.onNodeWithText("Dosis").assertExists()
-
         composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_NEW_MEDICATION).performClick()
+    }
 
-        composeRule.onNodeWithText("Ibuprofeno - 600").assertExists()
-
+    @Test
+    fun checkAndUncheckTrackerMultipleTimes_checkSummaryAfterwards(){
         composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
 
         composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
 
         composeRule.onNodeWithText("Nueva cantidad").performTextInput("20.5")
         composeRule.onNodeWithTag(TestTags.SAVE_PILL_AMOUNT).performClick()
-    }
 
-    @Test
-    fun checkAndUncheckTrackerMultipleTimes_checkSummaryAfterwards(){
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
@@ -78,6 +74,13 @@ class TrackerEndToEndTest {
 
     @Test
     fun checkTrackerMultipleTimes_PillCountShouldNotExtractDosage(){
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
+
+        composeRule.onNodeWithText("Nueva cantidad").performTextInput("20.5")
+        composeRule.onNodeWithTag(TestTags.SAVE_PILL_AMOUNT).performClick()
+
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
@@ -103,6 +106,13 @@ class TrackerEndToEndTest {
 
     @Test
     fun checkTrackerOneTime_PillCountShouldExtractDosage(){
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
+
+        composeRule.onNodeWithText("Nueva cantidad").performTextInput("20.5")
+        composeRule.onNodeWithTag(TestTags.SAVE_PILL_AMOUNT).performClick()
+
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
@@ -122,4 +132,27 @@ class TrackerEndToEndTest {
 
         composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("19")
     }
+
+    /*@Test
+    fun checkTrackerTwoTimesWithoutChangingPillAmount_PillCountShouldBeZero(){
+        composeRule.onNodeWithContentDescription("Alarma").performClick()
+        composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
+
+        composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
+
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+
+        composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("No Tomada").assertExists()
+
+        composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
+    }*/
 }

@@ -8,18 +8,9 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
 import androidx.test.rule.GrantPermissionRule
 import com.meyrforge.tomabien.MainActivity
-import com.meyrforge.tomabien.common.Constants
-import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.common.TestTags
-import com.meyrforge.tomabien.my_medications.presentation.MedicationAlarmsScreen
-import com.meyrforge.tomabien.my_medications.presentation.MyMedicationsScreen
-import com.meyrforge.tomabien.ui.theme.TomaBienTheme
-import com.meyrforge.tomabien.weekly_summary.presentation.WeeklySummaryScreen
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -108,5 +99,27 @@ class TrackerEndToEndTest {
         composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
 
         composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("20.5")
+    }
+
+    @Test
+    fun checkTrackerOneTime_PillCountShouldExtractDosage(){
+        composeRule.onNodeWithContentDescription("Alarma").performClick()
+        composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
+
+        composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
+
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+
+        composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
+
+        composeRule.onNodeWithText("Tomada").assertExists()
+
+        composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
+
+        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("19")
     }
 }

@@ -11,6 +11,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.navigation.NavController
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.weekly_summary.presentation.components.SummaryItemComponent
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -36,6 +38,9 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), nav
         Locale.getDefault()
     )
 
+    LaunchedEffect(key1 = true) {
+        viewModel.getAllTrackersWithMedications()
+    }
 
     val groupedByDate = trackerWithMedList?.groupBy {
         // Parse the date string to LocalDate for proper sorting
@@ -82,9 +87,10 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), nav
                 }
                 items(trackersForDate.size) { index ->
                     val tracker = trackersForDate[index]
-                    Column(modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)) {
-                        Text("Medicación: ${tracker.medication.name}", color = Color.White)
-                        if (tracker.medication.numberOfPills != -1f) {
+                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                        SummaryItemComponent(tracker)
+                        /*Text("Medicación: ${tracker.medication.name}", color = Color.White)
+                        if (tracker.medication.countActivated) {
                             Text("Dosis: ${tracker.medication.dosage}", color = Color.White)
                             Text("N° de Pastillas: ${tracker.medication.numberOfPills}", color = Color.White)
                         }
@@ -94,9 +100,9 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), nav
                                 if (tracker.tracker.taken) "Tomada" else "No tomada",
                             color = Color.White
                         )
-                        if (tracker.medication.numberOfPills == -1f){
+                        if (!tracker.medication.countActivated){
                             Text("Conteo desactivado", color = Color.White)
-                        }
+                        }*/
                     }
                 }
             }

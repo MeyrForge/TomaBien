@@ -15,7 +15,7 @@ data class MedicationEntity(
     val numberOfPills: Float = -1.0f,
     @ColumnInfo(name = "optional") val optional: Boolean,
     @ColumnInfo(name = "deleted") val deleted: Boolean,
-
+    @ColumnInfo(name = "count_activated") val countActivated: Boolean = false
 
 )
 
@@ -28,7 +28,8 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             optional = optional,
             deleted = deleted,
             medicationGrammage = grammage,
-            numberOfPills = numberOfPills
+            numberOfPills = numberOfPills,
+            countActivated = countActivated
         )
     } else {
         MedicationEntity(
@@ -37,7 +38,8 @@ fun Medication.toMedicationEntity(): MedicationEntity{
             optional = optional,
             deleted = deleted,
             medicationGrammage = grammage,
-            numberOfPills = numberOfPills
+            numberOfPills = numberOfPills,
+            countActivated = countActivated
         )
     }
 }
@@ -50,6 +52,7 @@ fun MedicationEntity.toMedication(): Medication{
         optional = optional,
         deleted = deleted,
         grammage = medicationGrammage,
-        numberOfPills = numberOfPills
+        numberOfPills = numberOfPills,
+        countActivated = countActivated
     )
 }

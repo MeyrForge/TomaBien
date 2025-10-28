@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.content.Context
 import androidx.room.Room
 import androidx.room.migration.AutoMigrationSpec
+import com.meyrforge.tomabien.common.data.MIGRATION_10_11
 import com.meyrforge.tomabien.common.data.MIGRATION_7_8
 import com.meyrforge.tomabien.common.data.MIGRATION_8_9
 import com.meyrforge.tomabien.common.data.MIGRATION_9_10
@@ -31,7 +32,7 @@ object AppModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context) =
         Room.databaseBuilder(context, TomaBienDatabase::class.java, DATABASE_NAME)
-            .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10)
+            .addMigrations(MIGRATION_7_8, MIGRATION_8_9, MIGRATION_9_10, MIGRATION_10_11)
             .build()
 
     @Provides

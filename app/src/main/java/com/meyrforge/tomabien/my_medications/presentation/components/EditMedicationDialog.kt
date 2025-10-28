@@ -50,7 +50,7 @@ fun EditMedicationDialog(
         viewModel.onMedicationNameChange(med.name)
         viewModel.onMedicationGrammageChange(med.grammage)
         viewModel.onIsOptionalChange(med.optional)
-        if (viewModel.numberOfPills.floatValue == -1.0f){
+        if (!med.countActivated){
             viewModel.onCountActivatedChange(false)
         }else{
             viewModel.onCountActivatedChange(true)

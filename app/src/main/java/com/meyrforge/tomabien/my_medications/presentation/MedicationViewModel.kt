@@ -124,7 +124,8 @@ class MedicationViewModel @Inject constructor(
                     _medicationGrammage.value,
                     _isOptional.value,
                     _medicationDosage.value.toFloatOrNull() ?: -1f,
-                    _numberOfPills.floatValue
+                    _numberOfPills.floatValue,
+                    _countActivated.value
 
                 )
                 if (result) {
@@ -174,7 +175,8 @@ class MedicationViewModel @Inject constructor(
                         _medicationGrammage.value,
                         medicationDosage.value.toFloatOrNull() ?: -1f,
                         isOptional.value,
-                        numberOfPills.floatValue
+                        numberOfPills.floatValue,
+                        _countActivated.value
                     )
                 )
                 if (result) {

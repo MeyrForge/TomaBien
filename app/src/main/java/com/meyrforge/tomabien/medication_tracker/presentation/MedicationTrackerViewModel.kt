@@ -63,7 +63,7 @@ class MedicationTrackerViewModel @Inject constructor(
                             medicationList.value?.find { medication ->
                                 medication.medication?.id == medId
                             }?.medication
-                        if (medicationToChange != null && medicationToChange.numberOfPills != -1f) {
+                        if (medicationToChange != null && medicationToChange.countActivated) {
                             if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
                                 updateNumberOfPillsUseCase(
                                     medId,
@@ -99,7 +99,7 @@ class MedicationTrackerViewModel @Inject constructor(
                                 medicationList.value?.find { medication ->
                                     medication.medication?.id == medId
                                 }?.medication
-                            if (medicationToChange != null && medicationToChange.numberOfPills != -1f) {
+                            if (medicationToChange != null && medicationToChange.countActivated) {
                                 if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
                                     updateNumberOfPillsUseCase(
                                         medId,
@@ -141,7 +141,7 @@ class MedicationTrackerViewModel @Inject constructor(
                 val medicationToChange = medicationList.value?.find { medication ->
                     medication.medication?.id == medId
                 }?.medication
-                if (medicationToChange != null && medicationToChange.numberOfPills != 1f && medicationToChange.numberOfPills >= medicationToChange.dosage && taken) {
+                if (medicationToChange != null && medicationToChange.countActivated && medicationToChange.numberOfPills >= medicationToChange.dosage && taken) {
                     updateNumberOfPillsUseCase(
                         medId,
                         (medicationToChange.numberOfPills - medicationToChange.dosage)

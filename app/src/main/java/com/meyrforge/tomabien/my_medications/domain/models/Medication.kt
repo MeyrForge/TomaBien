@@ -8,4 +8,6 @@ data class Medication(
     val optional: Boolean,
     var numberOfPills: Float = -1.0f,
     var taken: Boolean = false,
-    var deleted: Boolean = false)
+    var deleted: Boolean = false,
+    val countActivated: Boolean = false
+)

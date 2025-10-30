@@ -50,7 +50,7 @@ fun ChangePillsNumberDialog( viewModel: MedicationViewModel = hiltViewModel(), m
                 modifier = Modifier.size(32.dp)
             )
         },
-        title = { Text("${medication.name} ${medication.grammage} - Dosis ${medication.dosage}") },
+        title = { Text("${medication.name} ${medication.grammage}") },
         text = {
             PillDialogContent(
                 initialValue = medication.numberOfPills,

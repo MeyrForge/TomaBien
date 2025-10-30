@@ -4,7 +4,6 @@ data class Medication(
     val id: Int?,
     val name: String,
     val grammage: String,
-    val dosage: Float,
     val optional: Boolean,
     var numberOfPills: Float = -1.0f,
     var taken: Boolean = false,

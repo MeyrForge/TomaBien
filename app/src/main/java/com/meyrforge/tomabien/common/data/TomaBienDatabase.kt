@@ -12,7 +12,7 @@ import com.meyrforge.tomabien.my_medications.data.entities.MedicationEntity
 
 @Database(
     entities = [MedicationEntity::class, AlarmEntity::class, MedicationTrackerEntity::class],
-    version = 11
+    version = 12
 )
 abstract class TomaBienDatabase : RoomDatabase(){
     abstract fun medicationDao(): MedicationDao
@@ -71,5 +71,32 @@ val MIGRATION_9_10 = object : Migration(9, 10) {
 val MIGRATION_10_11 = object : Migration(10, 11) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("ALTER TABLE medication_table ADD COLUMN count_activated INTEGER NOT NULL DEFAULT 0")
+    }
+}
+
+val MIGRATION_11_12 = object : Migration(11, 12) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE alarm_table ADD COLUMN medication_dosage REAL NOT NULL DEFAULT 1.0")
+        db.execSQL("""
+            CREATE TABLE medication_table_new (
+                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                medication_name TEXT NOT NULL,
+                medication_grammage TEXT NOT NULL,
+                optional INTEGER NOT NULL,
+                deleted INTEGER NOT NULL,
+                number_of_pills REAL NOT NULL DEFAULT -1.0,
+                count_activated INTEGER NOT NULL
+            )
+        """)
+
+        db.execSQL("""
+            INSERT INTO medication_table_new (id, medication_name, medication_grammage, optional, deleted, number_of_pills, count_activated)
+            SELECT id, medication_name, medication_grammage, optional, deleted, number_of_pills, count_activated FROM medication_table
+        """)
+
+        db.execSQL("DROP TABLE medication_table")
+
+        db.execSQL("ALTER TABLE medication_table_new RENAME TO medication_table")
+
     }
 }

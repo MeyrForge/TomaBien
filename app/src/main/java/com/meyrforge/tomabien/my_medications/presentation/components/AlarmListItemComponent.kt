@@ -13,6 +13,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,18 +39,19 @@ fun AlarmListItemComponent(
             .padding(8.dp)
     ) {
         Row(
+            verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Text("$hour:$minute", color = PowderedPink, fontSize = 32.sp)
+            Text("$hour:$minute - Dosis ${alarm.dosage}", color = PowderedPink, fontSize = 28.sp)
             Icon(
                 Icons.Outlined.Delete,
                 "Eliminar alarma",
                 tint = pink,
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(28.dp)
                     .clickable {
                         onCancelAlarm(alarm.requestCode, viewModel.medicationName.value)
                         viewModel.deleteAlarm(alarm)

@@ -109,10 +109,6 @@ class MedicationViewModel @Inject constructor(
         ) {
             _notificationMessage.value = "Completar los campos"
         } else {
-            if (_countActivated.value && _medicationDosage.value.isEmpty()) {
-                _notificationMessage.value = "Completar los campos"
-                return
-            }
             if (_countActivated.value) {
                 _numberOfPills.floatValue = 0f
             } else {
@@ -123,17 +119,12 @@ class MedicationViewModel @Inject constructor(
                     _medicationName.value,
                     _medicationGrammage.value,
                     _isOptional.value,
-                    _medicationDosage.value.toFloatOrNull() ?: -1f,
                     _numberOfPills.floatValue,
                     _countActivated.value
 
                 )
                 if (result) {
-                    _medicationName.value = ""
-                    _medicationGrammage.value = ""
-                    _isOptional.value = false
-                    _medicationDosage.value = ""
-                    _countActivated.value = false
+                    resetValues()
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
                 } else {
@@ -158,10 +149,6 @@ class MedicationViewModel @Inject constructor(
         ) {
             _notificationMessage.value = "Completar los campos"
         } else {
-            if (_countActivated.value && _medicationDosage.value.isEmpty()) {
-                _notificationMessage.value = "Completar los campos"
-                return
-            }
             if (_countActivated.value) {
                 _numberOfPills.floatValue = 0f
             } else {
@@ -173,18 +160,13 @@ class MedicationViewModel @Inject constructor(
                         medicationId.intValue,
                         medicationName.value,
                         _medicationGrammage.value,
-                        medicationDosage.value.toFloatOrNull() ?: -1f,
                         isOptional.value,
                         numberOfPills.floatValue,
                         _countActivated.value
                     )
                 )
                 if (result) {
-                    _medicationName.value = ""
-                    _medicationGrammage.value = ""
-                    _isOptional.value = false
-                    _medicationDosage.value = ""
-                    _countActivated.value = false
+                    resetValues()
                     getAllMedications()
                     _notificationMessage.value = "Medicacion editada"
                 } else {
@@ -211,12 +193,17 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun addAlarm(requestCode: Int, hour: Int, minute: Int) {
-        viewModelScope.launch {
-            val result =
-                addAlarmUseCase(requestCode, hour, minute, medicationId.intValue)
-            if (!result)
-                _notificationMessage.value =
-                    "Ocurrio un error" else getAlarms(medicationId.intValue)
+        if (_medicationDosage.value.isEmpty()){
+            _notificationMessage.value = "Agregar dosis"
+        }else{
+            clearMessage()
+            viewModelScope.launch {
+                val result =
+                    addAlarmUseCase(requestCode, hour, minute, medicationId.intValue, _medicationDosage.value.toFloat())
+                if (!result)
+                    _notificationMessage.value =
+                        "Ocurrio un error" else getAlarms(medicationId.intValue)
+            }
         }
     }
 
@@ -246,7 +233,6 @@ class MedicationViewModel @Inject constructor(
         _medicationName.value = ""
         _medicationGrammage.value = ""
         _isOptional.value = false
-        _medicationDosage.value = ""
         _countActivated.value = false
     }
 

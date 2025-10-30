@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.meyrforge.tomabien.common.formatHour
 import com.meyrforge.tomabien.medication_tracker.domain.MedicationTrackerRepository
 import com.meyrforge.tomabien.medication_tracker.domain.models.MedicationTracker
 import com.meyrforge.tomabien.medication_tracker.domain.usecases.GetAllMedicationTrackerByDateUseCase
@@ -40,6 +41,9 @@ class MedicationTrackerViewModel @Inject constructor(
     private val _medicationTrackerList = MutableLiveData(emptyList<MedicationTracker>())
     val medicationTrackerList: LiveData<List<MedicationTracker>?> = _medicationTrackerList
 
+    private val _trackersToSaveOrEdit = MutableLiveData(emptyList<MedicationTracker>())
+    val trackersToSaveOrEdit: LiveData<List<MedicationTracker>> = _trackersToSaveOrEdit
+
     init {
         getMedicationWithAlarms()
         getAllMedicationTrackers()
@@ -51,110 +55,111 @@ class MedicationTrackerViewModel @Inject constructor(
         }
     }
 
-
-    fun saveOrEditMedicationTracker(medId: Int, date: String, hour: String, taken: Boolean) {
-        for (tracker in _wereSaved) {
-            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour) {
-                viewModelScope.launch {
-                    getMedicationTrackerByIdUseCase(medId)?.let {
-                        it.taken = taken
-                        updateMedicationTrackerUseCase(it)
-                        val medicationToChange =
-                            medicationList.value?.find { medication ->
-                                medication.medication?.id == medId
-                            }?.medication
-                        if (medicationToChange != null && medicationToChange.countActivated) {
-                            if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
-                                updateNumberOfPillsUseCase(
-                                    medId,
-                                    (medicationToChange.numberOfPills - medicationToChange.dosage)
-                                )
-                                medicationList.value?.find { medication ->
-                                    medication.medication?.id == medId
-                                }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
-                            } else {
-                                updateNumberOfPillsUseCase(
-                                    medId,
-                                    medicationToChange.numberOfPills + medicationToChange.dosage
-                                )
-                                medicationList.value?.find { medication ->
-                                    medication.medication?.id == medId
-                                }?.medication?.let { med -> med.numberOfPills += medicationToChange.dosage }
-                            }
-                        }
-                        getAllMedicationTrackers()
-                    }
-                }
+    fun addTrackerToList(tracker: MedicationTracker) {
+        _trackersToSaveOrEdit.value?.find { it.medicationId == tracker.medicationId && it.date == tracker.date && it.hour == tracker.hour }
+            ?.apply {
+                taken = tracker.taken
                 return
             }
-        }
-        for (tracker in _medicationTrackerList.value ?: emptyList()) {
-            if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour) {
-                viewModelScope.launch {
-                    tracker.id?.let { id ->
-                        getMedicationTrackerByIdUseCase(id)?.let {
-                            it.taken = taken
-                            updateMedicationTrackerUseCase(it)
-                            val medicationToChange =
-                                medicationList.value?.find { medication ->
-                                    medication.medication?.id == medId
-                                }?.medication
-                            if (medicationToChange != null && medicationToChange.countActivated) {
-                                if (taken && medicationToChange.numberOfPills >= medicationToChange.dosage) {
-                                    updateNumberOfPillsUseCase(
-                                        medId,
-                                        (medicationToChange.numberOfPills - medicationToChange.dosage)
-                                    )
-                                    medicationList.value?.find { medication ->
-                                        medication.medication?.id == medId
-                                    }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
-                                } else {
-                                    updateNumberOfPillsUseCase(
-                                        medId,
-                                        medicationToChange.numberOfPills + medicationToChange.dosage
-                                    )
-                                    medicationList.value?.find { medication ->
-                                        medication.medication?.id == medId
-                                    }?.medication?.let { med -> med.numberOfPills += medicationToChange.dosage }
+        _trackersToSaveOrEdit.value = _trackersToSaveOrEdit.value?.plus(tracker)
+    }
+
+    fun saveTrackers() {
+        viewModelScope.launch {
+            getAllMedicationTrackers()
+            //si ya hay trackers guardados para esta fecha
+            if (!_medicationTrackerList.value.isNullOrEmpty()) {
+                //recorro la lista de trackers a guardar
+                for (trackerToSave in _trackersToSaveOrEdit.value ?: emptyList()) {
+                    //recorro la lista de trackers ya guardados
+                    for (savedTracker in _medicationTrackerList.value ?: emptyList()) {
+                        //si el tracker a guardar ya esta en la lista de trackers guardados, lo edito en lugar de insertarlo
+                        if (savedTracker.medicationId == trackerToSave.medicationId && savedTracker.date == trackerToSave.date && savedTracker.hour == trackerToSave.hour) {
+                            savedTracker.taken = trackerToSave.taken
+                            updateMedicationTrackerUseCase(savedTracker)
+                            //busco si la medicacion tiene el conteo activado
+                            medicationList.value?.find { medication ->
+                                medication.medication?.id == trackerToSave.medicationId
+                            }?.medication?.let { medicationToChangePillCount ->
+                                if (medicationToChangePillCount.countActivated) {
+                                    val alarms =
+                                        medicationList.value?.find { medicationWithAlarms ->
+                                            medicationWithAlarms.medication?.id == trackerToSave.medicationId
+                                        }?.alarms
+                                    val dosage =
+                                        alarms?.find { alarm -> formatHour(alarm.hour, alarm.minute) == trackerToSave.hour }?.dosage
+                                    dosage?.let {
+                                        if (trackerToSave.taken && medicationToChangePillCount.numberOfPills >= it) {
+                                            updateNumberOfPillsUseCase(
+                                                trackerToSave.medicationId,
+                                                (medicationToChangePillCount.numberOfPills - it)
+                                            )
+                                            medicationList.value?.find { medication ->
+                                                medication.medication?.id == trackerToSave.medicationId
+                                            }?.medication?.let { med -> med.numberOfPills -= it }
+                                        } else if (!trackerToSave.taken) {
+                                            updateNumberOfPillsUseCase(
+                                                trackerToSave.medicationId,
+                                                medicationToChangePillCount.numberOfPills + it
+                                            )
+                                            medicationList.value?.find { medication ->
+                                                medication.medication?.id == trackerToSave.medicationId
+                                            }?.medication?.let { med -> med.numberOfPills += it }
+                                        }
+                                    }
                                 }
                             }
-                            getAllMedicationTrackers()
+                            //si el tracker a guardar no esta en la lista de trackers ya guardados lo inserto
+                        } else {
+                            saveTrackerForFirstTime(trackerToSave)
                         }
                     }
                 }
-                return
-            }
-        }
-
-        viewModelScope.launch {
-            val id = saveMedicationTrackerUseCase(medId, date, hour, taken)
-            id?.let {
-                _wereSaved.add(
-                    MedicationTracker(
-                        date = date,
-                        hour = hour,
-                        medicationId = medId,
-                        taken = taken,
-                        id = it.toInt()
-                    )
-                )
-                val medicationToChange = medicationList.value?.find { medication ->
-                    medication.medication?.id == medId
-                }?.medication
-                if (medicationToChange != null && medicationToChange.countActivated && medicationToChange.numberOfPills >= medicationToChange.dosage && taken) {
-                    updateNumberOfPillsUseCase(
-                        medId,
-                        (medicationToChange.numberOfPills - medicationToChange.dosage)
-                    )
-                    medicationList.value?.find { medication ->
-                        medication.medication?.id == medId
-                    }?.medication?.let { med -> med.numberOfPills -= medicationToChange.dosage }
+                getAllMedicationTrackers()
+                //si no hay trackers guardados para este dia
+            } else {
+                //recorro los trackers a guardar
+                for (trackerToSave in _trackersToSaveOrEdit.value ?: emptyList()) {
+                    saveTrackerForFirstTime(trackerToSave)
                 }
                 getAllMedicationTrackers()
             }
         }
     }
 
+    private suspend fun saveTrackerForFirstTime(trackerToSave: MedicationTracker) {
+        saveMedicationTrackerUseCase(
+            trackerToSave.medicationId,
+            trackerToSave.date,
+            trackerToSave.hour,
+            trackerToSave.taken
+        )
+        //busco si la medicacion tiene conteo activado
+        medicationList.value?.find { medication ->
+            medication.medication?.id == trackerToSave.medicationId
+        }?.medication?.let { medicationToChangePillCount ->
+            //si lo tiene activado busco la dosis en la alarma
+            if (medicationToChangePillCount.countActivated) {
+                val alarms =
+                    medicationList.value?.find { medicationWithAlarms ->
+                        medicationWithAlarms.medication?.id == trackerToSave.medicationId
+                    }?.alarms
+                val dosage =
+                    alarms?.find { alarm -> formatHour(alarm.hour, alarm.minute) == trackerToSave.hour }?.dosage
+                dosage?.let {
+                    if (trackerToSave.taken && medicationToChangePillCount.numberOfPills >= it) {
+                        updateNumberOfPillsUseCase(
+                            trackerToSave.medicationId,
+                            (medicationToChangePillCount.numberOfPills - it)
+                        )
+                        medicationList.value?.find { medication ->
+                            medication.medication?.id == trackerToSave.medicationId
+                        }?.medication?.let { med -> med.numberOfPills -= it }
+                    }
+                }
+            }
+        }
+    }
 
     fun getMedicationWithAlarms() {
         viewModelScope.launch {
@@ -173,5 +178,4 @@ class MedicationTrackerViewModel @Inject constructor(
             _medicationList.value = medicationsThatHaveAlarms
         }
     }
-
 }

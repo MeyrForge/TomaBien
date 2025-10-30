@@ -54,7 +54,6 @@ fun EditMedicationDialog(
             viewModel.onCountActivatedChange(false)
         }else{
             viewModel.onCountActivatedChange(true)
-            viewModel.onMedicationDosageChange(med.dosage.toString())
             viewModel.saveNumberOfPills(med.numberOfPills)
         }
     }
@@ -128,9 +127,7 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
     val medicationGrammage by viewModel.medicationGrammage
     val isOptional by viewModel.isOptional
     val countActivated by viewModel.countActivated
-    val medicationDosage by viewModel.medicationDosage
     val pattern = remember { Regex("^[0-9,.]+\$") }
-    val patternFloat = remember { Regex("^[0-9.]+\$") }
 
     Column() {
         Row(
@@ -209,27 +206,6 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
         }
 
         if (countActivated) {
-            OutlinedTextField(
-                value = medicationDosage,
-                onValueChange = {
-                    if (it.isEmpty() || it.matches(patternFloat)) viewModel.onMedicationDosageChange(
-                        it
-                    )
-                },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                label = { Text("Dosis") },
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedTextColor = PowderedPink,
-                    unfocusedBorderColor = PowderedPink,
-                    unfocusedLabelColor = PowderedPink,
-                    unfocusedLeadingIconColor = PowderedPink,
-                    focusedBorderColor = SoftBlueLavander,
-                    focusedLabelColor = SoftBlueLavander,
-                    focusedTextColor = SoftBlueLavander
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-            )
             Text("Más tarde, agregá la cantidad de pastillas que tengas apretando el ícono de blister", color = SoftBlueLavander, modifier = Modifier.padding(4.dp))
         }
 

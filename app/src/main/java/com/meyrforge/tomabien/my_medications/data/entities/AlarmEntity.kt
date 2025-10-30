@@ -21,12 +21,13 @@ data class AlarmEntity(
     @ColumnInfo(name = "medication_owner_id", index = true) val medicationOwnerId: Int,
     val hour: Int,
     val minute: Int,
+    @ColumnInfo(name = "medication_dosage") val medicationDosage: Float = 1.0f,
 )
 
 fun AlarmEntity.toAlarm(): Alarm {
-    return Alarm(requestCode, hour, minute, medicationOwnerId)
+    return Alarm(requestCode, hour, minute, medicationOwnerId, medicationDosage)
 }
 
 fun Alarm.toAlarmEntity(): AlarmEntity {
-    return AlarmEntity(requestCode, ownerId, hour, minute)
+    return AlarmEntity(requestCode, ownerId, hour, minute, dosage)
 }

@@ -69,14 +69,14 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.Bottom,
-                    modifier = Modifier.padding(4.dp)
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.fillMaxWidth().padding(4.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(8.dp)) {
+                    Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(4.dp)) {
                         Icon(Icons.Outlined.AccessAlarm, "Hora", tint = PowderedPink)
                         Text(tracker.tracker.hour, fontSize = 16.sp, color = Color.White)
                     }
-                    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.padding(8.dp)) {
+                    Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(4.dp)) {
                         Icon(
                             painterResource(R.drawable.ic_blister_xml),
                             "Conteo",
@@ -84,12 +84,12 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                             tint = if (!tracker.medication.countActivated) NavBarColor else PowderedPink
                         )
                         if (!tracker.medication.countActivated) {
-                            Text("Conteo desactivado", fontSize = 14.sp, color = Color.White)
+                            Text("Conteo desactivado", fontSize = 16.sp, color = Color.White)
                         } else {
                             val numberOfPills = tracker.medication.numberOfPills
                             val count = if (numberOfPills % 1.0f == 0f) numberOfPills.toInt() else numberOfPills
                             Text(
-                                if (count == 1) "1 pastilla" else "$count pastillas",
+                                if (count == 1) "Queda 1 pastilla" else "Quedan $count pastillas",
                                 fontSize = 16.sp,
                                 color = Color.White
                             )

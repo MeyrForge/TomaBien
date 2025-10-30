@@ -10,21 +10,17 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.common.TestTags
-import com.meyrforge.tomabien.common.getDayOfWeek
-import com.meyrforge.tomabien.common.getMonth
+import com.meyrforge.tomabien.medication_tracker.domain.models.MedicationTracker
 import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerViewModel
 import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.PowderedPink
@@ -38,7 +34,6 @@ fun MedicationTrackerItemComponent(
     medName: String,
     viewModel: MedicationTrackerViewModel = hiltViewModel()
 ) {
-    var wasTaken by remember { mutableStateOf(false) }
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)+1
@@ -47,13 +42,8 @@ fun MedicationTrackerItemComponent(
     val formattedMonth = month.toString().padStart(2, '0')
 
     val date = "$formattedDay/$formattedMonth/$year"
-    val trackerList by viewModel.medicationTrackerList.observeAsState()
-
-    for (tracker in trackerList?:emptyList()){
-        if (tracker.medicationId == medId && tracker.date == date && tracker.hour == hour){
-            wasTaken = tracker.taken
-        }
-    }
+    val trackerList = viewModel.medicationTrackerList.value
+    var wasTaken by remember { mutableStateOf(trackerList?.find { it.medicationId == medId && it.date == date && it.hour == hour }?.taken ?: false) }
 
 
     Column(modifier = Modifier.fillMaxWidth()) {
@@ -76,7 +66,7 @@ fun MedicationTrackerItemComponent(
                 wasTaken,
                 {
                     wasTaken = it
-                    viewModel.saveOrEditMedicationTracker(medId, date, hour, wasTaken)
+                    viewModel.addTrackerToList(MedicationTracker(id = null, date = date, hour = hour, medicationId = medId, taken = it))
                 },
                 colors = CheckboxDefaults.colors(checkedColor = PowderedPink),
                 modifier = Modifier.testTag(TestTags.TRACKER_CHECK)
@@ -84,11 +74,4 @@ fun MedicationTrackerItemComponent(
         }
         HorizontalDivider(thickness = 2.dp, color = SoftBlueLavander)
     }
-}
-
-private fun currentDay(): String {
-    val calendar = Calendar.getInstance()
-    return "${getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK))}," +
-            " ${calendar.get(Calendar.DAY_OF_MONTH)} de" +
-            " ${getMonth(calendar.get(Calendar.MONTH))}"
 }

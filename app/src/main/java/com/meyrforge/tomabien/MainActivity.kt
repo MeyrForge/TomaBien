@@ -162,7 +162,7 @@ class MainActivity : ComponentActivity() {
             .bigText(notificationText) // El texto detallado
 
         val builder = NotificationCompat.Builder(this, TomaBienApplication.LOW_PILLS_CHANNEL_ID)
-            .setSmallIcon(R.drawable.tb_smallicon)
+            .setSmallIcon(R.drawable.new_tb_small_icon)
             .setContentTitle("Pocas pastillas restantes") // Título cuando está contraída
             .setContentText("Tienes medicaciones con pocas unidades.") // Texto genérico para la vista contraída
             .setStyle(bigTextStyle) // Aplicamos el estilo expandible

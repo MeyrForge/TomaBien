@@ -6,9 +6,17 @@ import com.meyrforge.tomabien.medication_tracker.domain.models.MedicationTracker
 import javax.inject.Inject
 
 class SaveMedicationTrackerUseCase @Inject constructor(private val repository: MedicationTrackerRepository) {
-    suspend operator fun invoke(medId: Int, date: String, hour: String, taken: Boolean):Long?{
-        val tracker = MedicationTracker(null, date, hour, medId, taken)
-        return when (val result = repository.saveMedicationTracker(tracker)){
+    suspend operator fun invoke(
+        medId: Int,
+        date: String,
+        hour: String,
+        taken: Boolean,
+        numberOfPills: Float?,
+        lastTimeWasExtraction: Boolean?
+    ): Long? {
+        val tracker =
+            MedicationTracker(null, date, hour, medId, taken, numberOfPills?: 0.0f, lastTimeWasExtraction?: false)
+        return when (val result = repository.saveMedicationTracker(tracker)) {
             is Result.Success -> {
                 result.data
             }

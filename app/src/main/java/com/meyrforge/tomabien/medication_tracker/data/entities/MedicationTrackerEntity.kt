@@ -24,7 +24,9 @@ data class MedicationTrackerEntity(
     @ColumnInfo(name = "date") val date: String,
     @ColumnInfo(name = "hour") val hour: String,
     @ColumnInfo(name = "medication_id") val medicationId: Int,
-    @ColumnInfo(name = "taken") val taken: Boolean
+    @ColumnInfo(name = "taken") val taken: Boolean,
+    @ColumnInfo(name = "number_of_pills", defaultValue = "0.0") val numberOfPills: Float = 0.0f,
+    @ColumnInfo(name = "last_time_was_extraction", defaultValue = "0") val lastTimeWasExtraction: Boolean = false
 )
 
 data class MedicationWithTrackers(
@@ -43,7 +45,9 @@ fun MedicationTrackerEntity.toDomain(): MedicationTracker{
         date = date,
         hour = hour,
         medicationId = medicationId,
-        taken = taken
+        taken = taken,
+        numberOfPills = numberOfPills,
+        lastTimeWasExtracted = lastTimeWasExtraction
     )
 }
 
@@ -54,14 +58,18 @@ fun MedicationTracker.toEntity(): MedicationTrackerEntity{
             date = date,
             hour = hour,
             medicationId = medicationId,
-            taken = taken
+            taken = taken,
+            numberOfPills = numberOfPills,
+            lastTimeWasExtraction = lastTimeWasExtracted
         )
     }else{
         MedicationTrackerEntity(
             date = date,
             hour = hour,
             medicationId = medicationId,
-            taken = taken
+            taken = taken,
+            numberOfPills = numberOfPills,
+            lastTimeWasExtraction = lastTimeWasExtracted
         )
     }
 }

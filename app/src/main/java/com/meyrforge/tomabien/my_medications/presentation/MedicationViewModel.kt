@@ -134,7 +134,7 @@ class MedicationViewModel @Inject constructor(
         }
     }
 
-    private fun getAllMedications() {
+    fun getAllMedications() {
         viewModelScope.launch {
             val medList = getAllMedicationsUseCase()
 

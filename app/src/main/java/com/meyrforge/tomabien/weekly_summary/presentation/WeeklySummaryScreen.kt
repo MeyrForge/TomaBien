@@ -89,20 +89,6 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), nav
                     val tracker = trackersForDate[index]
                     Column(modifier = Modifier.padding(vertical = 8.dp)) {
                         SummaryItemComponent(tracker)
-                        /*Text("Medicación: ${tracker.medication.name}", color = Color.White)
-                        if (tracker.medication.countActivated) {
-                            Text("Dosis: ${tracker.medication.dosage}", color = Color.White)
-                            Text("N° de Pastillas: ${tracker.medication.numberOfPills}", color = Color.White)
-                        }
-                        Text("Horario: ${tracker.tracker.hour}", color = Color.White)
-                        Text(
-                            text =
-                                if (tracker.tracker.taken) "Tomada" else "No tomada",
-                            color = Color.White
-                        )
-                        if (!tracker.medication.countActivated){
-                            Text("Conteo desactivado", color = Color.White)
-                        }*/
                     }
                 }
             }

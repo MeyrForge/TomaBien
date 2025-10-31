@@ -56,6 +56,10 @@ fun MyMedicationsScreen(
     var openAlertDialogNew by remember { mutableStateOf(false) }
     var openPillsDialog by remember { mutableStateOf(false) }
 
+    LaunchedEffect(key1 = true) {
+        viewModel.getAllMedications()
+    }
+
     Scaffold(
         floatingActionButton = {
             ExtendedFloatingActionButton(

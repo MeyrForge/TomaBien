@@ -228,7 +228,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-            //val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
             val intent = Intent(this, AlarmReceiver::class.java).apply {
                 putExtra("message", "¡Hora de tu medicina! Es momento de tomar $medName.")
                 putExtra("alarm_id", requestCode)
@@ -266,8 +265,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun cancelAlarm(requestCode: Int, medName: String) {
-        //val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+    fun cancelAlarm(requestCode: Int, medName: String) {
         val intent = Intent(this, AlarmReceiver::class.java).apply {
             putExtra("message", "¡Hora de tu medicina! Es momento de tomar $medName.")
             putExtra("alarm_id", requestCode)

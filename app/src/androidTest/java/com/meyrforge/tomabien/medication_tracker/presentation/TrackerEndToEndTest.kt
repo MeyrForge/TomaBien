@@ -40,7 +40,6 @@ class TrackerEndToEndTest {
         composeRule.onNodeWithTag(TestTags.OPTIONAL_CHECK).performClick()
         composeRule.onNodeWithTag(TestTags.ACTIVATE_PILL_CHECK).performClick()
 
-        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_NEW_MEDICATION).performClick()
     }
 
@@ -55,20 +54,24 @@ class TrackerEndToEndTest {
 
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
 
         composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
 
         composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
 
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick()
+        composeRule.onNodeWithText("Guardar").performClick() //Tomada (-1.5)
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick()
+        composeRule.onNodeWithText("Guardar").performClick() //No Tomada (+1.5)
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick()
+        composeRule.onNodeWithText("Guardar").performClick() //Tomada (-1.5)
 
         composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
 
-        composeRule.onNodeWithText("No tomada").assertExists()
+        composeRule.onNodeWithText("Quedan 19 pastillas").assertExists()
+        composeRule.onNodeWithContentDescription("Fue tomada", useUnmergedTree = true).assertExists()
 
     }
 
@@ -83,22 +86,24 @@ class TrackerEndToEndTest {
 
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
 
         composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
 
         composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
 
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
-        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick()
+        composeRule.onNodeWithText("Guardar").performClick() //Tomada (-1.5)
+        composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick()
+        composeRule.onNodeWithText("Guardar").performClick() //No Tomada (+1.5)
 
         composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
 
-        composeRule.onNodeWithText("No tomada").assertExists()
+        composeRule.onNodeWithContentDescription("No fue tomada", useUnmergedTree = true).assertExists()
 
         composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithContentDescription("Atras").performClick()
         composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
 
         composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("20.5")
@@ -115,6 +120,7 @@ class TrackerEndToEndTest {
 
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
 
         composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
@@ -122,21 +128,24 @@ class TrackerEndToEndTest {
         composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
 
         composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithText("Guardar").performClick() //Tomada (-1.5)
 
         composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
 
-        composeRule.onNodeWithText("Tomada").assertExists()
+        composeRule.onNodeWithContentDescription("Fue tomada", useUnmergedTree = true).assertExists()
 
         composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
+        composeRule.onNodeWithContentDescription("Atras").performClick()
         composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
 
         composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("19")
     }
 
-    /*@Test
+    @Test
     fun checkTrackerTwoTimesWithoutChangingPillAmount_PillCountShouldBeZero(){
         composeRule.onNodeWithContentDescription("Alarma").performClick()
         composeRule.onNodeWithContentDescription("Agregar alarma").performClick()
+        composeRule.onNodeWithText("Dosis").performTextInput("1.5")
         composeRule.onNodeWithTag(TestTags.ADD_ALARM).performClick()
 
         composeRule.onNodeWithContentDescription("Seguimiento", useUnmergedTree = true).performClick()
@@ -144,15 +153,14 @@ class TrackerEndToEndTest {
         composeRule.onNodeWithText("Ibuprofeno 600").assertExists()
 
         composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //Tomada
+        composeRule.onNodeWithText("Guardar").performClick()
         composeRule.onNodeWithTag(TestTags.TRACKER_CHECK).performClick() //No Tomada
+        composeRule.onNodeWithText("Guardar").performClick()
 
         composeRule.onNodeWithContentDescription("Resumen", useUnmergedTree = true).performClick()
 
-        composeRule.onNodeWithText("No Tomada").assertExists()
+        composeRule.onNodeWithText("Quedan 0 pastillas").assertExists()
+        composeRule.onNodeWithContentDescription("No fue tomada", useUnmergedTree = true).assertExists()
 
-        composeRule.onNodeWithContentDescription("Mis Medicaciones", useUnmergedTree = true).performClick()
-        composeRule.onNodeWithContentDescription("Conteo de Pastillas").performClick()
-
-        composeRule.onNodeWithContentDescription("Cantidad de pastillas actual").assertTextEquals("0")
-    }*/
+    }
 }

@@ -35,6 +35,7 @@ fun MedicationTrackerScreen(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val list by viewModel.medicationList.observeAsState()
+    val notificationMessage by viewModel.notificationMessage.observeAsState()
 
     LaunchedEffect(key1 = true) {
         viewModel.getMedicationWithAlarms()
@@ -83,6 +84,12 @@ fun MedicationTrackerScreen(
                         viewModel.saveTrackers()
                     }
                 }
+            }
+        }
+        if(notificationMessage != null){
+            LaunchedEffect(notificationMessage) {
+                snackbarHostState.showSnackbar(notificationMessage!!)
+                viewModel.clearMessage()
             }
         }
     }

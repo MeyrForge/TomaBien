@@ -42,6 +42,9 @@ class MedicationTrackerViewModel @Inject constructor(
     private val _trackersToSaveOrEdit = MutableLiveData(emptyList<MedicationTracker>())
     val trackersToSaveOrEdit: LiveData<List<MedicationTracker>> = _trackersToSaveOrEdit
 
+    private val _notificationMessage = MutableLiveData<String?>(null)
+    val notificationMessage: LiveData<String?> = _notificationMessage
+
     init {
         getMedicationWithAlarms()
         getAllMedicationTrackers()
@@ -74,17 +77,19 @@ class MedicationTrackerViewModel @Inject constructor(
                         _medicationTrackerList.value?.find { it.medicationId == trackerToSave.medicationId && it.date == trackerToSave.date && it.hour == trackerToSave.hour }
                     //si el tracker a guardar ya esta en la lista de trackers guardados, lo edito en lugar de insertarlo
                     if (savedTracker != null) {
-                        savedTracker.taken = trackerToSave.taken
-                        //busco si la medicacion tiene el conteo activado
-                        medicationList.value?.find { medication ->
-                            medication.medication?.id == trackerToSave.medicationId
-                        }?.medication?.let { medicationToChangePillCount ->
-                            if (medicationToChangePillCount.countActivated) {
-                                ifCountIsActiveUpdateNumberOfPills(
-                                    savedTracker,
-                                    medicationToChangePillCount,
-                                    false
-                                )
+                        if (savedTracker.taken != trackerToSave.taken) {
+                            savedTracker.taken = trackerToSave.taken
+                            //busco si la medicacion tiene el conteo activado
+                            medicationList.value?.find { medication ->
+                                medication.medication?.id == trackerToSave.medicationId
+                            }?.medication?.let { medicationToChangePillCount ->
+                                if (medicationToChangePillCount.countActivated) {
+                                    ifCountIsActiveUpdateNumberOfPills(
+                                        savedTracker,
+                                        medicationToChangePillCount,
+                                        false
+                                    )
+                                }
                             }
                         }
                         //si el tracker a guardar no esta en la lista de trackers ya guardados lo inserto
@@ -98,7 +103,7 @@ class MedicationTrackerViewModel @Inject constructor(
                                     medicationToChangePillCount,
                                     true
                                 )
-                            }else{
+                            } else {
                                 saveOrEditTracker(trackerToSave, true)
                             }
                         }
@@ -118,7 +123,7 @@ class MedicationTrackerViewModel @Inject constructor(
                                 medicationToChangePillCount,
                                 true
                             )
-                        }else{
+                        } else {
                             saveOrEditTracker(trackerToSave, true)
                         }
                     }
@@ -126,12 +131,13 @@ class MedicationTrackerViewModel @Inject constructor(
                 getAllMedicationTrackers()
             }
         }
+        _notificationMessage.value = "Seguimiento actualizado"
     }
 
     private suspend fun ifCountIsActiveUpdateNumberOfPills(
         trackerToSave: MedicationTracker,
         medicationToChangePillCount: Medication,
-        isFirstTime: Boolean
+        isFirstTime: Boolean,
     ) {
         val alarms =
             medicationList.value?.find { medicationWithAlarms ->
@@ -146,9 +152,11 @@ class MedicationTrackerViewModel @Inject constructor(
             }?.dosage
         dosage?.let { dosage ->
             if (trackerToSave.taken && medicationToChangePillCount.numberOfPills >= dosage) {
-                if (isFirstTime){
-                    when(trackerToSave.lastTimeWasExtracted){
-                        true -> trackerToSave.numberOfPills = medicationToChangePillCount.numberOfPills
+                if (isFirstTime) {
+                    when (trackerToSave.lastTimeWasExtracted) {
+                        true -> trackerToSave.numberOfPills =
+                            medicationToChangePillCount.numberOfPills
+
                         false -> {
                             trackerToSave.numberOfPills =
                                 medicationToChangePillCount.numberOfPills - dosage
@@ -165,7 +173,7 @@ class MedicationTrackerViewModel @Inject constructor(
                     medication.medication?.id == trackerToSave.medicationId
                 }?.medication?.let { med -> med.numberOfPills = trackerToSave.numberOfPills }
             } else if (!trackerToSave.taken && !isFirstTime) {
-                if(trackerToSave.lastTimeWasExtracted) {
+                if (trackerToSave.lastTimeWasExtracted) {
                     trackerToSave.numberOfPills = medicationToChangePillCount.numberOfPills + dosage
                     trackerToSave.lastTimeWasExtracted = false
                 }
@@ -177,7 +185,7 @@ class MedicationTrackerViewModel @Inject constructor(
                 medicationList.value?.find { medication ->
                     medication.medication?.id == trackerToSave.medicationId
                 }?.medication?.let { med -> med.numberOfPills = trackerToSave.numberOfPills }
-            } else if (trackerToSave.taken && medicationToChangePillCount.numberOfPills < dosage){
+            } else if (trackerToSave.taken && medicationToChangePillCount.numberOfPills < dosage) {
                 trackerToSave.numberOfPills = medicationToChangePillCount.numberOfPills
                 saveOrEditTracker(trackerToSave, isFirstTime)
             }
@@ -186,7 +194,7 @@ class MedicationTrackerViewModel @Inject constructor(
 
     private suspend fun saveOrEditTracker(
         trackerToSave: MedicationTracker,
-        isFirstTime: Boolean
+        isFirstTime: Boolean,
     ) {
         if (isFirstTime) {
             saveMedicationTrackerUseCase(
@@ -218,5 +226,9 @@ class MedicationTrackerViewModel @Inject constructor(
             }
             _medicationList.value = medicationsThatHaveAlarms
         }
+    }
+
+    fun clearMessage() {
+        _notificationMessage.value = null
     }
 }

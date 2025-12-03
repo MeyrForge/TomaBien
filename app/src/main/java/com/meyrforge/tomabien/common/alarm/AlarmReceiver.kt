@@ -5,22 +5,36 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.meyrforge.tomabien.MainActivity
 import com.meyrforge.tomabien.R
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
+import androidx.core.content.edit
 
 class AlarmReceiver: BroadcastReceiver() {
+
+    companion object {
+        private const val PREFS_NAME = "alarm_prefs"
+    }
+
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onReceive(context: Context?, intent: Intent?) {
-        val i = Intent(context, MainActivity::class.java)
-        val requestCode = intent?.getIntExtra("alarm_id", -1) ?: 0
-        val message = intent?.getStringExtra("message") ?: "Toma de medicacion"
-        intent!!.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        if (context == null || intent == null) return
+
+        val i = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val requestCode = intent.getIntExtra("alarm_id", -1)
+        val message = intent.getStringExtra("message") ?: "Toma de medicacion"
+
         val pendingIntent = PendingIntent.getActivity(context, requestCode, i, PendingIntent.FLAG_IMMUTABLE)
 
-        val builder = NotificationCompat.Builder(context!!, "TomaBien")
+        val builder = NotificationCompat.Builder(context, "TomaBien")
             .setSmallIcon(R.drawable.new_tb_small_icon)
             .setContentTitle("TomaBien")
             .setContentText(message)
@@ -29,6 +43,13 @@ class AlarmReceiver: BroadcastReceiver() {
             .setContentIntent(pendingIntent)
 
         val notificationManager = NotificationManagerCompat.from(context)
-        notificationManager.notify(requestCode+1, builder.build())
+        try {
+            notificationManager.notify(requestCode+1, builder.build())
+        } catch (_: SecurityException){
+
+        }
+        val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val today = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Calendar.getInstance().time)
+        prefs.edit { putString("alarm_${requestCode}_last_shown", today) }
     }
 }

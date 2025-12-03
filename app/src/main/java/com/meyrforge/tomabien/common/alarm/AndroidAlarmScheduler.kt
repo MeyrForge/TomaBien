@@ -6,11 +6,15 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.workDataOf
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.WorkManager
 import com.meyrforge.tomabien.my_medications.domain.AlarmScheduler
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class AndroidAlarmScheduler @Inject constructor(
@@ -21,6 +25,7 @@ class AndroidAlarmScheduler @Inject constructor(
     lateinit var alarmManager: AlarmManager
 
     override fun schedule(hour: Int, minute: Int, requestCode: Int, medName: String): String {
+
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -55,6 +60,34 @@ class AndroidAlarmScheduler @Inject constructor(
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
+
+                val now = System.currentTimeMillis()
+                var initialDelayMillis = calendar.timeInMillis - now
+                if (initialDelayMillis < 0) initialDelayMillis = 0
+
+                val input = workDataOf(
+                    "requestCode" to requestCode,
+                    "hour" to hour,
+                    "minute" to minute,
+                    "medName" to medName
+                )
+
+                val periodicWork = PeriodicWorkRequestBuilder<AlarmCheckWorker>(
+                    24, TimeUnit.HOURS,
+                    15, TimeUnit.MINUTES
+                )
+                    .setInitialDelay(initialDelayMillis, TimeUnit.MILLISECONDS)
+                    .setInputData(input)
+                    .build()
+
+                val uniqueName = "alarm_backup_$requestCode"
+                WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                    uniqueName,
+                    ExistingPeriodicWorkPolicy.REPLACE,
+                    periodicWork
+                )
+
+
                 val hourFormatted = if (hour.toString().length == 1) {
                     "0$hour"
                 } else hour.toString()
@@ -63,7 +96,7 @@ class AndroidAlarmScheduler @Inject constructor(
                 } else minute.toString()
                 return "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días."
             } catch (e: SecurityException) {
-                return "Se requiere un permiso especial para programar alarmas exactas."
+                return "No se pudo programar la alarma por restricciones del sistema"
             }
         } else {
             return "El permiso para mostrar notificaciones no fue otorgado"
@@ -81,6 +114,10 @@ class AndroidAlarmScheduler @Inject constructor(
             PendingIntent.getBroadcast(context, requestCode, intent, pendingIntentFlags)
 
         alarmManager.cancel(pendingIntent)
+
+        val uniqueName = "alarm_backup_$requestCode"
+        WorkManager.getInstance(context).cancelUniqueWork(uniqueName)
+
         return "La alarma fue cancelada"
     }
 }

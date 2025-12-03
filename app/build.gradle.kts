@@ -87,9 +87,11 @@ dependencies {
     androidTestImplementation (libs.androidx.rules)
 
     //FIREBASE
-    implementation(platform("com.google.firebase:firebase-bom:34.4.0"))
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-crashlytics-ndk")
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics.ndk)
 
+    //WORKMANAGER
+    implementation(libs.androidx.work.runtime.ktx)
 
 }

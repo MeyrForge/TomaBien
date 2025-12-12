@@ -43,21 +43,24 @@ import com.meyrforge.tomabien.common.TestTags
 fun EditMedicationDialog(
     viewModel: MedicationViewModel = hiltViewModel(),
     medToEdit: Medication?,
-    onDismiss: () -> Unit
+    onCancelAlarm: (Int, String) -> Unit,
+    onDismiss: () -> Unit,
 ) {
     var med = medToEdit
     if (med != null) {
         viewModel.onMedicationNameChange(med.name)
         viewModel.onMedicationGrammageChange(med.grammage)
         viewModel.onIsOptionalChange(med.optional)
-        if (!med.countActivated){
+        if (!med.countActivated) {
             viewModel.onCountActivatedChange(false)
-        }else{
+        } else {
             viewModel.onCountActivatedChange(true)
             viewModel.saveNumberOfPills(med.numberOfPills)
         }
     }
     var emptyFields by remember { mutableStateOf(false) }
+    val countActivated by viewModel.countActivated
+
     AlertDialog(
         icon = {
             Icon(Icons.Outlined.AddCircleOutline, contentDescription = "Icono")
@@ -67,7 +70,7 @@ fun EditMedicationDialog(
         },
         text = {
             Column {
-                NewMedicationContent(med = med)
+                NewMedicationContent(med = med, onCancelAlarm = onCancelAlarm)
                 if (emptyFields)
                     Text("Completar los campos", color = pink)
             }
@@ -88,12 +91,16 @@ fun EditMedicationDialog(
 
                         if (med == null) {
                             viewModel.saveMedication()
-                            onDismiss()
+                            if (countActivated){
+                                viewModel.onIsAddPillVisibleChange(true)
+                            }
                         } else {
                             viewModel.onMedicationIdChange(med?.id ?: 0)
                             viewModel.editMedication()
                             med = null
-                            onDismiss()
+                            if (countActivated){
+                                viewModel.onIsAddPillVisibleChange(true)
+                            }
                         }
                     }
                 }
@@ -121,7 +128,11 @@ fun EditMedicationDialog(
 }
 
 @Composable
-fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: Medication?) {
+fun NewMedicationContent(
+    viewModel: MedicationViewModel = hiltViewModel(),
+    med: Medication?,
+    onCancelAlarm: (Int, String) -> Unit,
+) {
     val notificationMessage by viewModel.notificationMessage.observeAsState()
     val medicationName by viewModel.medicationName
     val medicationGrammage by viewModel.medicationGrammage
@@ -153,7 +164,8 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                         focusedTextColor = SoftBlueLavander
                     ),
                     modifier = Modifier
-                        .fillMaxWidth().testTag(TestTags.NEW_MEDICATION_NAME)
+                        .fillMaxWidth()
+                        .testTag(TestTags.NEW_MEDICATION_NAME)
                 )
             }
             Box(
@@ -179,7 +191,8 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                         focusedTextColor = SoftBlueLavander
                     ),
                     modifier = Modifier
-                        .fillMaxWidth().testTag(TestTags.NEW_MEDICATION_GRAMMAGE)
+                        .fillMaxWidth()
+                        .testTag(TestTags.NEW_MEDICATION_GRAMMAGE)
                 )
             }
         }
@@ -192,7 +205,11 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 .padding(2.dp)
         ) {
             Text("Opcional", fontSize = 18.sp)
-            SegmentedButtonComponent(Modifier.testTag(TestTags.OPTIONAL_CHECK), isOptional, viewModel::onIsOptionalChange)
+            SegmentedButtonComponent(
+                Modifier.testTag(TestTags.OPTIONAL_CHECK),
+                isOptional,
+                viewModel::onIsOptionalChange
+            )
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -202,19 +219,37 @@ fun NewMedicationContent(viewModel: MedicationViewModel = hiltViewModel(), med: 
                 .padding(2.dp)
         ) {
             Text("Activar conteo de pastillas", fontSize = 18.sp, modifier = Modifier.weight(5f))
-            SegmentedButtonComponent(Modifier.testTag(TestTags.ACTIVATE_PILL_CHECK), countActivated, viewModel::onCountActivatedChange)
+            SegmentedButtonComponent(
+                Modifier.testTag(TestTags.ACTIVATE_PILL_CHECK),
+                countActivated,
+                viewModel::onCountActivatedChange
+            )
         }
 
         if (countActivated) {
-            Text("Más tarde, agregá la cantidad de pastillas que tengas apretando el ícono de blister", color = SoftBlueLavander, modifier = Modifier.padding(4.dp))
+            Text(
+                "Más tarde, agregá la cantidad de pastillas que tengas apretando el ícono de blister",
+                color = SoftBlueLavander,
+                modifier = Modifier.padding(4.dp)
+            )
         }
 
-        HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp, modifier = Modifier.padding(top = 8.dp))
+        HorizontalDivider(
+            color = SoftBlueLavander,
+            thickness = 3.dp,
+            modifier = Modifier.padding(top = 8.dp)
+        )
         notificationMessage?.let {
             Text(it, color = pink)
         }
         if (med != null) {
-            TextButton({ viewModel.deleteMedication(med) }, contentPadding = PaddingValues(0.dp)) {
+            TextButton({
+                viewModel.deleteMedication(med)
+                viewModel.getAlarms(med.id ?: 0)
+                viewModel.alarms.value.let {
+                    it?.forEach { alarm -> onCancelAlarm(alarm.requestCode, med.name) }
+                }
+            }, contentPadding = PaddingValues(0.dp)) {
                 Text(
                     "Eliminar medicación",
                     color = pink,

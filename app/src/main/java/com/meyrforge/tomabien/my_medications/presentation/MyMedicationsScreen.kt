@@ -1,5 +1,9 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +50,7 @@ import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 @Composable
 fun MyMedicationsScreen(
     navController: NavController,
+    onCancelAlarm: (Int, String) -> Unit,
     viewModel: MedicationViewModel = hiltViewModel(),
 ) {
     var medicationToEdit by remember { mutableStateOf<Medication?>(null) }
@@ -55,6 +60,8 @@ fun MyMedicationsScreen(
     var openAlertDialog by remember { mutableStateOf(false) }
     var openAlertDialogNew by remember { mutableStateOf(false) }
     var openPillsDialog by remember { mutableStateOf(false) }
+
+    var isAddPillVisible by viewModel.isAddPillVisible
 
     LaunchedEffect(key1 = true) {
         viewModel.getAllMedications()
@@ -143,15 +150,43 @@ fun MyMedicationsScreen(
             }
         }
         if (openAlertDialog) {
-            EditMedicationDialog(medToEdit = medicationToEdit) { openAlertDialog = false }
+            AnimatedContent(
+                targetState = isAddPillVisible,
+                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
+                content = { visible ->
+                    if (!visible) {
+                        EditMedicationDialog(
+                            medToEdit = medicationToEdit,
+                            onCancelAlarm = onCancelAlarm
+                        ) { openAlertDialog = false }
+                    } else {
+                        medicationToNumber?.let {
+                            ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
+                        }
+                    }
+                })
         }
         if (openPillsDialog) {
             medicationToNumber?.let {
                 ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
             }
         }
-        if (openAlertDialogNew){
-            EditMedicationDialog(medToEdit = null) { openAlertDialogNew = false }
+        if (openAlertDialogNew) {
+            AnimatedContent(
+                targetState = isAddPillVisible,
+                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
+                content = { visible ->
+                    if (!visible) {
+                        EditMedicationDialog(
+                            medToEdit = null,
+                            onCancelAlarm = onCancelAlarm
+                        ) { openAlertDialogNew = false }
+                    } else {
+                        medicationToNumber?.let {
+                            ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
+                        }
+                    }
+                })
         }
         LaunchedEffect(medicationList) {
             openAlertDialog = false

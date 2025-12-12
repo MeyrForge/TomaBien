@@ -72,8 +72,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val medicationTrackerViewModel: MedicationTrackerViewModel by viewModels()
+
     @Inject
     lateinit var alarmManager: AlarmManager
+
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -126,10 +128,11 @@ class MainActivity : ComponentActivity() {
                             startDestination = Screen.MyMedications.route
                         ) {
                             composable(route = Screen.MyMedications.route) {
-                                MyMedicationsScreen(navController)
+                                MyMedicationsScreen(navController, ::cancelAlarm)
                             }
                             composable(route = Screen.Alarms.route + "/{${Constants.MEDICATION_ID}}") {
-                                MedicationAlarmsScreen(navController = navController,
+                                MedicationAlarmsScreen(
+                                    navController = navController,
                                     onSetAlarm = ::setAlarm, onCancelAlarm = ::cancelAlarm,
                                     launchPermission = { permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS) }
                                 )
@@ -149,7 +152,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showLowPillsNotification(medications: List<Medication>) {
-        val notificationId = 1001 // Usamos un ID fijo para que la notificación se sobreescriba y no se acumulen.
+        val notificationId =
+            1001 // Usamos un ID fijo para que la notificación se sobreescriba y no se acumulen.
 
         // Creamos el texto detallado para la notificación.
         val notificationText = medications.joinToString(separator = "\n") { med ->
@@ -223,9 +227,9 @@ class MainActivity : ComponentActivity() {
                 set(Calendar.SECOND, 0)
                 set(Calendar.MILLISECOND, 0)
 
-                if (timeInMillis <= System.currentTimeMillis()) {
-                    add(Calendar.DAY_OF_YEAR, 1)
-                }
+
+                add(Calendar.DAY_OF_YEAR, 1)
+
             }
 
             val intent = Intent(this, AlarmReceiver::class.java).apply {
@@ -245,14 +249,22 @@ class MainActivity : ComponentActivity() {
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
-                val hourFormatted = if (hour.toString().length == 1){ "0$hour"} else hour.toString()
-                val minuteFormatted = if (minute.toString().length == 1){ "0$minute"} else minute.toString()
-                Toast.makeText(this, "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días.", Toast.LENGTH_LONG)
+                val hourFormatted = if (hour.toString().length == 1) {
+                    "0$hour"
+                } else hour.toString()
+                val minuteFormatted = if (minute.toString().length == 1) {
+                    "0$minute"
+                } else minute.toString()
+                Toast.makeText(
+                    this,
+                    "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días.",
+                    Toast.LENGTH_LONG
+                )
                     .show()
             } catch (e: SecurityException) {
                 Toast.makeText(
                     this,
-                    "Se requiere un permiso especial para programar alarmas exactas.",
+                    "Algo salió mal. Inténtalo de nuevo",
                     Toast.LENGTH_LONG
                 ).show()
             }
@@ -304,12 +316,12 @@ fun NavigationBarComponent(navController: NavController) {
             ),
             onClick = {
                 navController.navigate(trackerScreen.route) {
-                 popUpTo(navController.graph.findStartDestination().id) {
-                    saveState = true
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
                 }
-                launchSingleTop = true
-                restoreState = true
-            }
             })
 
         val summaryScreen = Screen.WeeklySummary

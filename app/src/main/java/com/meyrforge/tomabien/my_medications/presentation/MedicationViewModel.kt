@@ -56,6 +56,9 @@ class MedicationViewModel @Inject constructor(
     private val _countActivated = mutableStateOf(false)
     val countActivated = _countActivated
 
+    private val _isAddPillVisible = mutableStateOf(false)
+    val isAddPillVisible = _isAddPillVisible
+
     private val _medicationList = MutableLiveData(emptyList<Medication>())
     val medicationList = _medicationList
 
@@ -101,6 +104,10 @@ class MedicationViewModel @Inject constructor(
 
     fun onIsOptionalChange(isOptional: Boolean) {
         _isOptional.value = isOptional
+    }
+
+    fun onIsAddPillVisibleChange(value: Boolean){
+        _isAddPillVisible.value = value
     }
 
     fun saveMedication() {
@@ -207,7 +214,7 @@ class MedicationViewModel @Inject constructor(
         }
     }
 
-    private fun getAlarms(medicationId: Int) {
+    fun getAlarms(medicationId: Int) {
         viewModelScope.launch {
             val result = getAlarmsUseCase(medicationId)
             result?.let {

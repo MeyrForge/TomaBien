@@ -87,7 +87,7 @@ dependencies {
     androidTestImplementation (libs.androidx.rules)
 
     //FIREBASE
-    implementation(libs.firebase.bom)
+    implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics.ndk)
 

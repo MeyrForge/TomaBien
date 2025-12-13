@@ -30,6 +30,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.meyrforge.tomabien.common.DialogState
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.sharedComponents.SegmentedButtonComponent
@@ -92,14 +93,20 @@ fun EditMedicationDialog(
                         if (med == null) {
                             viewModel.saveMedication()
                             if (countActivated){
-                                viewModel.onIsAddPillVisibleChange(true)
+                                viewModel.onIsAddPillVisibleChange(DialogState.CHANGE_PILLS)
+                            }else{
+                                onDismiss()
                             }
                         } else {
                             viewModel.onMedicationIdChange(med?.id ?: 0)
                             viewModel.editMedication()
-                            med = null
                             if (countActivated){
-                                viewModel.onIsAddPillVisibleChange(true)
+                                viewModel.onMedicationToCountChange(med!!.copy(countActivated = true, numberOfPills = 0f))
+                                med = null
+                                viewModel.onIsAddPillVisibleChange(DialogState.CHANGE_PILLS)
+                            }else{
+                                onDismiss()
+                                med = null
                             }
                         }
                     }

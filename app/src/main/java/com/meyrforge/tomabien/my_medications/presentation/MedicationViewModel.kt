@@ -9,6 +9,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.meyrforge.tomabien.common.Constants
+import com.meyrforge.tomabien.common.DialogState
 import com.meyrforge.tomabien.common.alarm.Alarm
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.domain.usecases.AddAlarmUseCase
@@ -56,8 +57,11 @@ class MedicationViewModel @Inject constructor(
     private val _countActivated = mutableStateOf(false)
     val countActivated = _countActivated
 
-    private val _isAddPillVisible = mutableStateOf(false)
+    private val _isAddPillVisible = MutableLiveData(DialogState.HIDDEN)
     val isAddPillVisible = _isAddPillVisible
+
+    private val _medicationToCount = MutableLiveData<Medication?>(null)
+    val medicationToCount = _medicationToCount
 
     private val _medicationList = MutableLiveData(emptyList<Medication>())
     val medicationList = _medicationList
@@ -106,8 +110,16 @@ class MedicationViewModel @Inject constructor(
         _isOptional.value = isOptional
     }
 
-    fun onIsAddPillVisibleChange(value: Boolean){
+    fun onIsAddPillVisibleChange(value: DialogState){
         _isAddPillVisible.value = value
+    }
+
+    fun onMedicationToCountChange(value: Medication){
+        _medicationToCount.value = value
+    }
+
+    fun resetMedicationToCount(){
+        _medicationToCount.value = null
     }
 
     fun saveMedication() {
@@ -134,6 +146,7 @@ class MedicationViewModel @Inject constructor(
                     resetValues()
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
+                    _medicationToCount.value = _medicationList.value?.last()
                 } else {
                     _notificationMessage.value = "Algo salio mal"
                 }
@@ -169,7 +182,9 @@ class MedicationViewModel @Inject constructor(
                         _medicationGrammage.value,
                         isOptional.value,
                         numberOfPills.floatValue,
-                        _countActivated.value
+                        taken = false,
+                        deleted = false,
+                        countActivated = _countActivated.value
                     )
                 )
                 if (result) {

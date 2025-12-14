@@ -1,5 +1,6 @@
 package com.meyrforge.tomabien.my_medications.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,6 +48,7 @@ import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import kotlin.math.log
 
 @Composable
 fun MyMedicationsScreen(
@@ -208,7 +210,10 @@ fun MyMedicationsScreen(
                 EditMedicationDialog(
                     medToEdit = medicationToEdit, // Será null si es nueva, o tendrá valor si es para editar
                     onCancelAlarm = onCancelAlarm,
-                    onDismiss = { viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN) }
+                    onDismiss = {
+                        viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                        medicationToEdit = null
+                    }
                 )
             }
 
@@ -216,29 +221,27 @@ fun MyMedicationsScreen(
                 medicationToNumber?.let { med ->
                     ChangePillsNumberDialog(
                         medication = med,
-                        onDismiss = { viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN) }
+                        onDismiss = {
+                            viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                            viewModel.resetMedicationToCount()
+                        }
                     )
                 }
             }
 
             DialogState.HIDDEN -> {
-                // No se muestra nada
+                Log.i("MyMedicationsScreen", "DialogState.HIDDEN")
             }
 
             DialogState.ADD_MEDICATION -> {
                 EditMedicationDialog(
                     medToEdit = null,
                     onCancelAlarm = onCancelAlarm,
-                    onDismiss = { viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN) }
+                    onDismiss = {
+                        viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                    }
                 )
             }
-        }
-
-        LaunchedEffect(medicationList) {
-            viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
-            medicationToEdit = null
-            //medicationToNumber = null
-            viewModel.resetMedicationToCount()
         }
 
         NotificationSnackbar(viewModel, snackbarHostState)

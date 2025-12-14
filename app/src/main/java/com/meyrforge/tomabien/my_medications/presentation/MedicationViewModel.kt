@@ -57,7 +57,7 @@ class MedicationViewModel @Inject constructor(
     private val _countActivated = mutableStateOf(false)
     val countActivated = _countActivated
 
-    private val _isAddPillVisible = MutableLiveData(DialogState.HIDDEN)
+    private val _isAddPillVisible = MutableLiveData<DialogState>()
     val isAddPillVisible = _isAddPillVisible
 
     private val _medicationToCount = MutableLiveData<Medication?>(null)

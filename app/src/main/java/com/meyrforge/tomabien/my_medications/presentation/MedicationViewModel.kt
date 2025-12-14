@@ -14,7 +14,6 @@ import com.meyrforge.tomabien.common.alarm.Alarm
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.domain.usecases.AddAlarmUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.DeleteAlarmUseCase
-import com.meyrforge.tomabien.my_medications.domain.usecases.DeleteMedicationUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.EditMedicationUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
@@ -110,15 +109,15 @@ class MedicationViewModel @Inject constructor(
         _isOptional.value = isOptional
     }
 
-    fun onIsAddPillVisibleChange(value: DialogState){
+    fun onIsAddPillVisibleChange(value: DialogState) {
         _isAddPillVisible.value = value
     }
 
-    fun onMedicationToCountChange(value: Medication){
+    fun onMedicationToCountChange(value: Medication) {
         _medicationToCount.value = value
     }
 
-    fun resetMedicationToCount(){
+    fun resetMedicationToCount() {
         _medicationToCount.value = null
     }
 
@@ -146,7 +145,6 @@ class MedicationViewModel @Inject constructor(
                     resetValues()
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
-                    _medicationToCount.value = _medicationList.value?.last()
                 } else {
                     _notificationMessage.value = "Algo salio mal"
                 }
@@ -158,8 +156,11 @@ class MedicationViewModel @Inject constructor(
         viewModelScope.launch {
             val medList = getAllMedicationsUseCase()
 
-            if (medList != null)
+            if (medList != null) {
                 _medicationList.value = medList.filter { !it.deleted }
+                if(_medicationList.value?.isNotEmpty() ?: false)
+                _medicationToCount.value = _medicationList.value?.last()
+            }
         }
     }
 
@@ -203,6 +204,7 @@ class MedicationViewModel @Inject constructor(
             medication.deleted = true
             val result = editMedicationUseCase(medication)
             if (result) {
+                _isAddPillVisible.value = DialogState.HIDDEN
                 getAllMedications()
             } else {
                 _notificationMessage.value = "Algo salio mal"
@@ -215,13 +217,19 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun addAlarm(requestCode: Int, hour: Int, minute: Int) {
-        if (_medicationDosage.value.isEmpty()){
+        if (_medicationDosage.value.isEmpty()) {
             _notificationMessage.value = "Agregar dosis"
-        }else{
+        } else {
             clearMessage()
             viewModelScope.launch {
                 val result =
-                    addAlarmUseCase(requestCode, hour, minute, medicationId.intValue, _medicationDosage.value.toFloat())
+                    addAlarmUseCase(
+                        requestCode,
+                        hour,
+                        minute,
+                        medicationId.intValue,
+                        _medicationDosage.value.toFloat()
+                    )
                 if (!result)
                     _notificationMessage.value =
                         "Ocurrio un error" else getAlarms(medicationId.intValue)

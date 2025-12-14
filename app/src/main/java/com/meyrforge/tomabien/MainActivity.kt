@@ -125,7 +125,7 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.padding(it)) {
                         NavHost(
                             navController = navController,
-                            startDestination = Screen.MyMedications.route
+                            startDestination = Screen.WeeklySummary.route
                         ) {
                             composable(route = Screen.MyMedications.route) {
                                 MyMedicationsScreen(navController, ::cancelAlarm)

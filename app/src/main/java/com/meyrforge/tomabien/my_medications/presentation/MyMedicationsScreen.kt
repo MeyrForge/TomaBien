@@ -4,6 +4,10 @@ import android.util.Log
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -48,7 +52,6 @@ import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
-import kotlin.math.log
 
 @Composable
 fun MyMedicationsScreen(
@@ -57,15 +60,10 @@ fun MyMedicationsScreen(
     viewModel: MedicationViewModel = hiltViewModel(),
 ) {
     var medicationToEdit by remember { mutableStateOf<Medication?>(null) }
-    //var medicationToNumber by remember { mutableStateOf<Medication?>(null) }
     val medicationToNumber by viewModel.medicationToCount.observeAsState()
     val medicationList: List<Medication> by viewModel.medicationList.observeAsState(emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
-//    var openAlertDialog by remember { mutableStateOf(false) }
-//    var openAlertDialogNew by remember { mutableStateOf(false) }
-//    var openPillsDialog by remember { mutableStateOf(false) }
 
-    //var currentDialog by remember { mutableStateOf(DialogState.HIDDEN) }
     val currentDialog by viewModel.isAddPillVisible.observeAsState(DialogState.HIDDEN)
 
     LaunchedEffect(key1 = true) {
@@ -160,87 +158,57 @@ fun MyMedicationsScreen(
                 }
             }
         }
-        /*
-        if (openAlertDialog) {
-            AnimatedContent(
-                targetState = isAddPillVisible,
-                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-                content = { shouldShowPills ->
-                    if (!shouldShowPills) {
-                        EditMedicationDialog(
-                            medToEdit = medicationToEdit,
-                            onCancelAlarm = onCancelAlarm
-                        ) { openAlertDialog = false }
-                    } else {
-                        medicationToNumber?.let {
-                            ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
-                        }
-                    }
-                })
-        }
-        if (openPillsDialog) {
-            medicationToNumber?.let {
-                ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
-            }
-        }
-        if (openAlertDialogNew) {
-            AnimatedContent(
-                targetState = isAddPillVisible,
-                transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-                content = { visible ->
-                    if (!visible) {
-                        EditMedicationDialog(
-                            medToEdit = null,
-                            onCancelAlarm = onCancelAlarm
-                        ) { openAlertDialogNew = false }
-                    } else {
-                        medicationToNumber?.let {
-                            ChangePillsNumberDialog(medication = it) { openPillsDialog = false }
-                        }
-                    }
-                })
-        }
-        LaunchedEffect(medicationList) {
-            openAlertDialog = false
-            medicationToEdit = null
-        }
-        */
-        when (currentDialog) {
-            DialogState.EDIT_MEDICATION -> {
-                EditMedicationDialog(
-                    medToEdit = medicationToEdit, // Será null si es nueva, o tendrá valor si es para editar
-                    onCancelAlarm = onCancelAlarm,
-                    onDismiss = {
-                        viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
-                        medicationToEdit = null
-                    }
-                )
-            }
-
-            DialogState.CHANGE_PILLS -> {
-                medicationToNumber?.let { med ->
-                    ChangePillsNumberDialog(
-                        medication = med,
+        AnimatedContent(
+            targetState = currentDialog,
+            modifier = Modifier.fillMaxSize(),
+            transitionSpec = {
+                if (targetState != DialogState.HIDDEN) {
+                    slideInVertically { fullHeight -> fullHeight } + fadeIn() togetherWith
+                            slideOutVertically { fullHeight -> -fullHeight } + fadeOut()
+                } else {
+                    slideInVertically { fullHeight -> -fullHeight } + fadeIn() togetherWith
+                            slideOutVertically { fullHeight -> fullHeight } + fadeOut()
+                }
+            },
+            label = "DialogAnimation",
+        ) { dialogState ->
+            when (dialogState) {
+                DialogState.EDIT_MEDICATION -> {
+                    EditMedicationDialog(
+                        medToEdit = medicationToEdit,
+                        onCancelAlarm = onCancelAlarm,
                         onDismiss = {
                             viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
-                            viewModel.resetMedicationToCount()
+                            medicationToEdit = null
                         }
                     )
                 }
-            }
 
-            DialogState.HIDDEN -> {
-                Log.i("MyMedicationsScreen", "DialogState.HIDDEN")
-            }
-
-            DialogState.ADD_MEDICATION -> {
-                EditMedicationDialog(
-                    medToEdit = null,
-                    onCancelAlarm = onCancelAlarm,
-                    onDismiss = {
-                        viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                DialogState.CHANGE_PILLS -> {
+                    medicationToNumber?.let { med ->
+                        ChangePillsNumberDialog(
+                            medication = med,
+                            onDismiss = {
+                                viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                                viewModel.resetMedicationToCount()
+                            }
+                        )
                     }
-                )
+                }
+
+                DialogState.HIDDEN -> {
+                    Log.i("MyMedicationsScreen", "DialogState.HIDDEN")
+                }
+
+                DialogState.ADD_MEDICATION -> {
+                    EditMedicationDialog(
+                        medToEdit = null,
+                        onCancelAlarm = onCancelAlarm,
+                        onDismiss = {
+                            viewModel.onIsAddPillVisibleChange(DialogState.HIDDEN)
+                        }
+                    )
+                }
             }
         }
 

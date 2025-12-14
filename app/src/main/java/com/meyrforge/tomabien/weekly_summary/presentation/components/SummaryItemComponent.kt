@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.weekly_summary.domain.models.TrackerWithMedicationData
 
 @Composable
@@ -54,7 +55,7 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                 .fillMaxWidth()
                 .padding(horizontal = 4.dp, vertical = 4.dp)
                 .background(
-                    PowderedPink.copy(alpha = 0.4f),
+                    PowderedPink.copy(alpha = 0.8f),
                     RoundedCornerShape(10.dp)
                 )
                 .padding(horizontal = 16.dp, vertical = 4.dp)
@@ -73,7 +74,7 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                     modifier = Modifier.fillMaxWidth().padding(4.dp)
                 ) {
                     Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(4.dp)) {
-                        Icon(Icons.Outlined.AccessAlarm, "Hora", tint = PowderedPink)
+                        Icon(Icons.Outlined.AccessAlarm, "Hora", tint = Color.White)
                         Text(tracker.tracker.hour, fontSize = 16.sp, color = Color.White)
                     }
                     Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(4.dp)) {
@@ -81,7 +82,7 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                             painterResource(R.drawable.ic_blister_xml),
                             "Conteo",
                             modifier = Modifier.size(24.dp),
-                            tint = if (!tracker.medication.countActivated) NavBarColor else PowderedPink
+                            tint = if (!tracker.medication.countActivated) NavBarColor else Color.White
                         )
                         if (!tracker.medication.countActivated) {
                             Text("Conteo desactivado", fontSize = 16.sp, color = Color.White)
@@ -106,7 +107,7 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                     Icon(
                         Icons.Outlined.CheckCircle,
                         "Fue tomada",
-                        tint = PowderedPink,
+                        tint = Color.White,
                         modifier = Modifier.size(24.dp)
                     )
                 } else {

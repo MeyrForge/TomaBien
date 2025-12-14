@@ -1,7 +1,14 @@
 package com.meyrforge.tomabien.weekly_summary.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,9 +36,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
@@ -41,7 +55,10 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), navController : NavController) {
+fun WeeklySummaryScreen(
+    viewModel: WeeklySummaryViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val trackerWithMedList by viewModel.trackerWithMedicationList.observeAsState()
 
@@ -74,63 +91,63 @@ fun WeeklySummaryScreen(viewModel: WeeklySummaryViewModel = hiltViewModel(), nav
             SnackbarHost(snackbarHostState)
         }
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier.Companion
+        Box(
+            modifier = Modifier
                 .fillMaxSize()
                 .background(DeepPurple)
                 .padding(paddingValues)
-                .padding(24.dp)
         ) {
-            item {
-                ScreenTitleComponent("Resumen de Toma")
-            }
-            groupedByDate?.forEach { (date, trackersForDate) ->
-                /*item {
-                    Text(
-                        text = date,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = PowderedPink,
-                        modifier = Modifier.padding(vertical = 8.dp)
-                    )
-                }
-                items(trackersForDate.size) { index ->
-                    val tracker = trackersForDate[index]
-                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                        SummaryItemComponent(tracker)
-                    }
-                }*/
+            Image(
+                painter = painterResource(id = R.drawable.new_tb_icon),
+                contentDescription = "TomaBien logo de fondo",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .alpha(0.2f),
+                contentScale = ContentScale.Fit
+            )
+            LazyColumn(
+                modifier = Modifier.Companion
+                    .fillMaxSize()
+                    .padding(24.dp)
+            ) {
                 item {
-                    val isExpanded = expandedDate == date
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                // Si ya está expandido, lo cerramos. Si no, lo expandimos.
-                                expandedDate = if (isExpanded) null else date
-                            }
-                            .padding(vertical = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = if (date == todayDateString) "Hoy ($date)" else date,
-                            style = MaterialTheme.typography.titleLarge,
-                            color = PowderedPink,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            imageVector = if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
-                            contentDescription = if (isExpanded) "Cerrar" else "Expandir",
-                            tint = PowderedPink
-                        )
-                    }
+                    ScreenTitleComponent("Resumen de Toma")
                 }
-                // 3. Contenido expandible
-                // Usamos AnimatedVisibility para una animación suave de apertura/cierre
-                if (expandedDate == date) {
+                groupedByDate?.forEach { (date, trackersForDate) ->
+                    item {
+                        val isExpanded = expandedDate == date
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    expandedDate = if (isExpanded) null else date
+                                }
+                                .padding(vertical = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = if (date == todayDateString) "Hoy ($date)" else date,
+                                style = MaterialTheme.typography.titleLarge,
+                                color = PowderedPink,
+                                modifier = Modifier.weight(1f)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Icon(
+                                imageVector = if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                contentDescription = if (isExpanded) "Cerrar" else "Expandir",
+                                tint = PowderedPink
+                            )
+                        }
+                    }
                     items(trackersForDate) { tracker ->
-                        Column(modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)) {
-                            SummaryItemComponent(tracker)
+                        AnimatedVisibility(
+                            visible = expandedDate == date,
+                            enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                            exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
+                        ) {
+                            Column(modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)) {
+                                SummaryItemComponent(tracker)
+                            }
                         }
                     }
                 }

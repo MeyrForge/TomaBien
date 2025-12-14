@@ -100,7 +100,7 @@ fun EditMedicationDialog(
                         } else {
                             viewModel.onMedicationIdChange(med?.id ?: 0)
                             viewModel.editMedication()
-                            if (countActivated){
+                            if (countActivated && med?.countActivated == false){
                                 viewModel.onMedicationToCountChange(med!!.copy(countActivated = true, numberOfPills = 0f))
                                 med = null
                                 viewModel.onIsAddPillVisibleChange(DialogState.CHANGE_PILLS)
@@ -235,7 +235,7 @@ fun NewMedicationContent(
 
         if (countActivated) {
             Text(
-                "Más tarde, agregá la cantidad de pastillas que tengas apretando el ícono de blister",
+                "Vas a poder editar la cantidad de pastillas que tengas apretando el ícono de blister",
                 color = SoftBlueLavander,
                 modifier = Modifier.padding(4.dp)
             )

@@ -15,7 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import com.meyrforge.tomabien.ui.theme.lightGray
+import com.meyrforge.tomabien.ui.theme.petroleum
 
 @Composable
 fun SegmentedButtonComponent(
@@ -43,13 +44,13 @@ fun SegmentedButtonComponent(
             }
         },
         colors = SwitchDefaults.colors(
-            checkedTrackColor = PowderedPink,
+            checkedTrackColor = petroleum,
             checkedThumbColor = Color.White,
             checkedIconColor = DeepPurple,
             disabledCheckedTrackColor = Color.Gray,
             disabledUncheckedTrackColor = Color.Gray,
             uncheckedBorderColor = Color.Transparent,
-            uncheckedThumbColor = SoftBlueLavander
+            uncheckedThumbColor = lightGray
 
         ),
         modifier = modifier

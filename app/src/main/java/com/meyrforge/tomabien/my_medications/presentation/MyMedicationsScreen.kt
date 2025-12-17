@@ -22,6 +22,7 @@ import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +54,7 @@ import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import com.meyrforge.tomabien.ui.theme.gray
 
 @Composable
 fun MyMedicationsScreen(
@@ -72,17 +75,15 @@ fun MyMedicationsScreen(
 
     Scaffold(
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = {
                     //openAlertDialogNew = true
                     viewModel.onIsAddPillVisibleChange(DialogState.ADD_MEDICATION)
                 },
-                containerColor = PowderedPink,
-                contentColor = DeepPurple,
-                icon = { Icon(Icons.Outlined.Add, "Agregar medicación") },
-                text = {
-                    Text("Agregar medicación")
-                })
+                containerColor = gray,
+                contentColor = Color.White,
+                content = { Icon(Icons.Outlined.Add, "Agregar medicación") },
+                )
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)
@@ -123,7 +124,7 @@ fun MyMedicationsScreen(
                 }
             }
 
-            item {
+            /*item {
                 Spacer(modifier = Modifier.size(24.dp))
                 Column {
                     Text(
@@ -156,7 +157,7 @@ fun MyMedicationsScreen(
                         tint = PowderedPink
                     )
                 }
-            }
+            }*/
         }
         AnimatedContent(
             targetState = currentDialog,

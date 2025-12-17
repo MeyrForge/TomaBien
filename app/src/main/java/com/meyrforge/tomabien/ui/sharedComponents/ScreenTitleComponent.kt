@@ -21,6 +21,7 @@ import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.ui.theme.gray
 
 @Preview
 @Composable
@@ -30,7 +31,7 @@ fun ScreenTitleComponent(text: String = "Titulo") {
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
             .padding(bottom = 24.dp)
-            .background(PowderedPink.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
+            .background(gray.copy(alpha = 0.5f), RoundedCornerShape(10.dp))
             .padding(16.dp)
     ) {
         Text(

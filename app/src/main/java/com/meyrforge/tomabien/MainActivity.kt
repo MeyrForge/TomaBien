@@ -20,8 +20,11 @@ import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddTask
+import androidx.compose.material.icons.filled.Summarize
 import androidx.compose.material.icons.outlined.AddTask
 import androidx.compose.material.icons.outlined.Medication
 import androidx.compose.material.icons.outlined.Summarize
@@ -40,6 +43,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -64,6 +69,8 @@ import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.ui.theme.TomaBienTheme
+import com.meyrforge.tomabien.ui.theme.gray
+import com.meyrforge.tomabien.ui.theme.petroleum
 import com.meyrforge.tomabien.weekly_summary.presentation.WeeklySummaryScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Calendar
@@ -305,14 +312,15 @@ fun NavigationBarComponent(navController: NavController) {
     ) {
         val trackerScreen = Screen.MedicationTracker
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.AddTask, "Seguimiento") },
+            icon = { Icon(Icons.Filled.AddTask, "Seguimiento", modifier = Modifier.size(30.dp)) },
             selected = currentDestination?.hierarchy?.any { it.route == trackerScreen.route } == true,
             label = { Text("Seguimiento") },
             colors = NavigationBarItemDefaults.colors(
-                unselectedIconColor = PowderedPink,
-                unselectedTextColor = PowderedPink,
-                indicatorColor = SoftBlueLavander,
-                selectedTextColor = SoftBlueLavander
+                unselectedIconColor = gray,
+                unselectedTextColor = gray,
+                indicatorColor = Color.Transparent,
+                selectedTextColor = petroleum,
+                selectedIconColor = petroleum
             ),
             onClick = {
                 navController.navigate(trackerScreen.route) {
@@ -326,14 +334,15 @@ fun NavigationBarComponent(navController: NavController) {
 
         val summaryScreen = Screen.WeeklySummary
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Summarize, "Resumen") },
+            icon = { Icon(Icons.Filled.Summarize, "Resumen", modifier = Modifier.size(30.dp)) },
             selected = currentDestination?.hierarchy?.any { it.route == summaryScreen.route } == true,
             label = { Text("Resumen de Toma") },
             colors = NavigationBarItemDefaults.colors(
-                unselectedIconColor = PowderedPink,
-                unselectedTextColor = PowderedPink,
-                indicatorColor = SoftBlueLavander,
-                selectedTextColor = SoftBlueLavander
+                unselectedIconColor = gray,
+                unselectedTextColor = gray,
+                indicatorColor = Color.Transparent,
+                selectedTextColor = petroleum,
+                selectedIconColor = petroleum
             ),
             onClick = {
                 navController.navigate(summaryScreen.route) {
@@ -347,14 +356,15 @@ fun NavigationBarComponent(navController: NavController) {
 
         val myMedsScreen = Screen.MyMedications
         NavigationBarItem(
-            icon = { Icon(Icons.Outlined.Medication, "Mis Medicaciones") },
+            icon = { Icon(painterResource(R.drawable.ic_pills), "Mis Medicaciones", modifier = Modifier.size(30.dp)) },
             selected = currentDestination?.hierarchy?.any { it.route == myMedsScreen.route } == true,
             label = { Text("Mis medicaciones") },
             colors = NavigationBarItemDefaults.colors(
-                unselectedIconColor = PowderedPink,
-                unselectedTextColor = PowderedPink,
-                indicatorColor = SoftBlueLavander,
-                selectedTextColor = SoftBlueLavander
+                unselectedIconColor = gray,
+                unselectedTextColor = gray,
+                indicatorColor = Color.Transparent,
+                selectedTextColor = petroleum,
+                selectedIconColor = petroleum
             ),
             onClick = {
                 navController.navigate(myMedsScreen.route) {

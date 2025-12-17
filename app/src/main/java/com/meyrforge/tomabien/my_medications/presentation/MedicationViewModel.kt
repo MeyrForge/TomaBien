@@ -158,8 +158,8 @@ class MedicationViewModel @Inject constructor(
 
             if (medList != null) {
                 _medicationList.value = medList.filter { !it.deleted }
-                if(_medicationList.value?.isNotEmpty() ?: false)
-                _medicationToCount.value = _medicationList.value?.last()
+                if (_medicationList.value?.isNotEmpty() ?: false)
+                    _medicationToCount.value = _medicationList.value?.last()
             }
         }
     }

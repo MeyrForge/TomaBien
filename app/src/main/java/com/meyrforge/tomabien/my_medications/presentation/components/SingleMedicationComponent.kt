@@ -3,6 +3,7 @@ package com.meyrforge.tomabien.my_medications.presentation.components
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
@@ -68,7 +69,7 @@ import com.meyrforge.tomabien.ui.theme.petroleum
 import com.meyrforge.tomabien.ui.theme.purple
 
 @Composable
-fun SingleMedicationComponent(
+fun SingleMedicationComponentOld(
     navController: NavController,
     viewModel: MedicationViewModel = hiltViewModel(),
     med: Medication,
@@ -139,42 +140,50 @@ fun SingleMedicationComponent(
     }
 }
 
-@Preview
 @Composable
-fun SingleMedicationComponentPreview() {
+fun SingleMedicationComponent(
+    navController: NavController,
+    viewModel: MedicationViewModel = hiltViewModel(),
+    med: Medication,
+    onEdit: () -> Unit,
+    onPillsOpened: () -> Unit
+) {
+    val context = LocalContext.current
     var isOptionsVisible by remember { mutableStateOf(false) }
     AnimatedContent(
         targetState = isOptionsVisible,
         transitionSpec = {
-            slideInHorizontally { fullHeight -> fullHeight } togetherWith slideOutHorizontally { fullHeight -> -fullHeight }
+            slideInHorizontally(animationSpec = tween(durationMillis = 300)) togetherWith slideOutHorizontally(
+                animationSpec = tween(durationMillis = 300)
+            )
         }) { visible ->
-        if (!visible) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(gray)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = 0.9f)
-                            .height(120.dp)
-                            .background(
-                                lightGray,
-                                RoundedCornerShape(20.dp)
-                            )
-                    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(120.dp)
+                .padding(12.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(if (visible) lightGray else gray)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.9f)
+                        .height(120.dp)
+                        .background(
+                            if (!visible) lightGray else gray,
+                            RoundedCornerShape(20.dp)
+                        )
+                ) {
+                    if (!visible) {
                         Box(
                             modifier = Modifier
                                 .padding(12.dp)
                                 .size(60.dp)
                                 .clip(CircleShape)
-                                .background(gray),
+                                .background(if (med.optional) petroleum else gray),
                             contentAlignment = Alignment.Center
                         ) {
                             Icon(
@@ -185,70 +194,100 @@ fun SingleMedicationComponentPreview() {
                             )
                         }
                         Text(
-                            "Paracetamol 600mg",
+                            "${med.name} - ${med.grammage}mg",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,
                             modifier = Modifier.padding(12.dp)
                         )
-                    }
-                    Icon(
-                        Icons.Filled.KeyboardDoubleArrowLeft,
-                        "Flecha",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable { isOptionsVisible = true })
-                }
-
-            }
-        } else {
-            Box(contentAlignment = Alignment.CenterEnd,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .padding(12.dp)
-                    .clip(RoundedCornerShape(20.dp))
-                    .background(gray)
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        Icons.Filled.KeyboardDoubleArrowRight,
-                        "Flecha",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .size(30.dp)
-                            .clickable { isOptionsVisible = false })
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Start,
-                        modifier = Modifier
-                            .fillMaxWidth(fraction = 0.9f)
-                            .height(120.dp)
-                            .background(
-                                lightGray,
-                                RoundedCornerShape(20.dp)
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(lightGray),
+                                contentAlignment = Alignment.Center
                             )
-                    ) {
-                        Icon(
-                            painterResource(id = R.drawable.ic_blister_xml),
-                            "Conteo de Pastillas",
-                            tint = purple
-                        )
-                        Icon(
-                            Icons.Outlined.Edit,
-                            "Editar",
-                            tint = Color.White
-                        )
-                        Icon(
-                            Icons.Outlined.Alarm,
-                            "Alarma",
-                            tint = petroleum
-                        )
+                            {
+                                Icon(
+                                    painterResource(id = R.drawable.ic_blister_xml),
+                                    "Conteo de Pastillas",
+                                    tint = if (!med.countActivated) NavBarColor else Color.White,
+                                    modifier = Modifier
+                                        .size(35.dp)
+                                        .clickable {
+                                            if (!med.countActivated) {
+                                                Toast.makeText(
+                                                    context,
+                                                    "Conteo de pastillas desactivado",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            } else {
+                                                onPillsOpened()
+                                            }
+                                        }
+
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(lightGray),
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    Icons.Outlined.Edit,
+                                    "Editar",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .size(35.dp)
+                                        .clickable {
+                                            onEdit()
+                                        }
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(lightGray),
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    Icons.Outlined.Alarm,
+                                    "Alarma",
+                                    tint = Color.White,
+                                    modifier = Modifier
+                                        .size(35.dp)
+                                        .clickable {
+                                            navController.navigate(Screen.Alarms.route + "/${med.id}")
+                                        }
+                                )
+                            }
+
+                        }
                     }
                 }
-            }
+                Icon(
+                    Icons.Filled.KeyboardDoubleArrowLeft,
+                    "Flecha",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { isOptionsVisible = !visible })
 
+            }
         }
     }
 }

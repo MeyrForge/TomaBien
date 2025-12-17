@@ -23,3 +23,6 @@ val orange = Color(0xFFAD6E32)
 val purple = Color(0xFF7856C5)
 val pink = Color(0xFFBB2952)
 val petroleum = Color(0xFF277ABE)
+
+val gray = Color(0xFF585858)
+val lightGray = Color(0xFF909090)

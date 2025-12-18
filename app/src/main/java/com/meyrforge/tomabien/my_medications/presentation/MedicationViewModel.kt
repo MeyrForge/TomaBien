@@ -50,6 +50,9 @@ class MedicationViewModel @Inject constructor(
     private val _medicationGrammage = mutableStateOf("")
     val medicationGrammage = _medicationGrammage
 
+    private val _isMiligrams = mutableStateOf(true)
+    val isMiligrams = _isMiligrams
+
     private val _isOptional = mutableStateOf(false)
     val isOptional = _isOptional
 
@@ -93,6 +96,10 @@ class MedicationViewModel @Inject constructor(
         _medicationGrammage.value = grammage
     }
 
+    fun onIsMiligramsChange(value: Boolean){
+        _isMiligrams.value = value
+    }
+
     fun onMedicationIdChange(id: Int) {
         _medicationId.intValue = id
     }
@@ -132,10 +139,11 @@ class MedicationViewModel @Inject constructor(
             } else {
                 _numberOfPills.floatValue = -1f
             }
+            val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
             viewModelScope.launch {
                 val result = saveMedicationUseCase(
                     _medicationName.value,
-                    _medicationGrammage.value,
+                    _medicationGrammage.value+miligramsOrGrams,
                     _isOptional.value,
                     _numberOfPills.floatValue,
                     _countActivated.value
@@ -176,11 +184,12 @@ class MedicationViewModel @Inject constructor(
                 _numberOfPills.floatValue = -1f
             }
             viewModelScope.launch {
+                val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
                 val result = editMedicationUseCase(
                     Medication(
                         medicationId.intValue,
                         medicationName.value,
-                        _medicationGrammage.value,
+                        _medicationGrammage.value+miligramsOrGrams,
                         isOptional.value,
                         numberOfPills.floatValue,
                         taken = false,

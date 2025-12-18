@@ -1,31 +1,25 @@
 package com.meyrforge.tomabien.my_medications.presentation.components
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
-import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material.icons.outlined.Album
 import androidx.compose.material.icons.outlined.Edit
@@ -41,18 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
-import androidx.navigation.NavHostController
 import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.common.Screen
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
@@ -60,13 +49,10 @@ import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.LightWarmGray
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.PurpleGrey40
-import com.meyrforge.tomabien.ui.theme.PurpleGrey80
 import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.ui.theme.gray
 import com.meyrforge.tomabien.ui.theme.lightGray
 import com.meyrforge.tomabien.ui.theme.petroleum
-import com.meyrforge.tomabien.ui.theme.purple
 
 @Composable
 fun SingleMedicationComponentOld(
@@ -194,7 +180,7 @@ fun SingleMedicationComponent(
                             )
                         }
                         Text(
-                            "${med.name} - ${med.grammage}mg",
+                            "${med.name} - ${med.grammage}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = Color.White,

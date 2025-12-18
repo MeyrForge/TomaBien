@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.ArrowBackIosNew
 import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -32,6 +34,7 @@ import com.meyrforge.tomabien.my_medications.presentation.components.AlarmListIt
 import com.meyrforge.tomabien.ui.sharedComponents.ScreenTitleComponent
 import com.meyrforge.tomabien.ui.theme.DeepPurple
 import com.meyrforge.tomabien.ui.theme.PowderedPink
+import com.meyrforge.tomabien.ui.theme.gray
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
@@ -51,7 +54,7 @@ fun MedicationAlarmsScreen(
             Icon(
                 Icons.Outlined.ArrowBackIosNew,
                 contentDescription = "Atras",
-                tint = PowderedPink,
+                tint = Color.White,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .padding(top = 16.dp)
@@ -59,14 +62,12 @@ fun MedicationAlarmsScreen(
             )
         },
         floatingActionButton = {
-            ExtendedFloatingActionButton(
+            FloatingActionButton(
                 onClick = { openAlertDialog = true },
-                containerColor = PowderedPink,
-                contentColor = DeepPurple,
-                icon = { Icon(Icons.Outlined.Add, "Agregar alarma") },
-                text = {
-                    Text("Agregar alarma")
-                })
+                containerColor = gray,
+                contentColor = Color.White,
+                content = { Icon(Icons.Outlined.Add, "Agregar alarma") },
+            )
         },
         snackbarHost = {
             SnackbarHost(snackbarHostState)

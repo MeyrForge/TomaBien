@@ -124,7 +124,7 @@ fun EditMedicationDialog(
                     }
                 }
             ) {
-                Text(if (med == null) "Agregar" else "Editar", color = petroleum)
+                Text("Aceptar", color = Color.White)
             }
         },
         dismissButton = {
@@ -134,7 +134,7 @@ fun EditMedicationDialog(
                     viewModel.resetValues()
                 }
             ) {
-                Text("Cancelar", color = Color.White)
+                Text("Cancelar", color = lightGray)
             }
         },
         modifier = Modifier.fillMaxWidth(),
@@ -158,7 +158,7 @@ fun NewMedicationContent(
     val isOptional by viewModel.isOptional
     val countActivated by viewModel.countActivated
     val pattern = remember { Regex("^[0-9,.]+\$") }
-    var isMiligrams by remember { mutableStateOf(true) }
+    val isMiligrams by viewModel.isMiligrams
 
     Column() {
         Box(
@@ -220,7 +220,7 @@ fun NewMedicationContent(
                         .width(35.dp)
                         .height(50.dp)
                         .padding(4.dp)
-                        .clickable{isMiligrams = !isMiligrams}
+                        .clickable{viewModel.onIsMiligramsChange(true)}
                 ) {
                     Text(
                         "mg",
@@ -235,7 +235,7 @@ fun NewMedicationContent(
                         .width(35.dp)
                         .height(50.dp)
                         .padding(4.dp)
-                        .clickable{isMiligrams = !isMiligrams}
+                        .clickable{viewModel.onIsMiligramsChange(false)}
                 ) {
                     Text(
                         "gr",

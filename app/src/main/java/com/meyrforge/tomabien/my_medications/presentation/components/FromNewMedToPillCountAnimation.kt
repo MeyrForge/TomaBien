@@ -1,32 +1,29 @@
 package com.meyrforge.tomabien.my_medications.presentation.components
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.animation.with
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Alarm
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Alarm
+import androidx.compose.material.icons.filled.DeleteForever
+import androidx.compose.material.icons.filled.KeyboardDoubleArrowLeft
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -35,88 +32,103 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import com.meyrforge.tomabien.R
-import com.meyrforge.tomabien.common.TestTags
-import com.meyrforge.tomabien.ui.theme.DeepPurple
-import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import androidx.compose.ui.unit.sp
+import com.meyrforge.tomabien.ui.theme.gray
+import com.meyrforge.tomabien.ui.theme.lightGray
+import com.meyrforge.tomabien.ui.theme.petroleum
 import com.meyrforge.tomabien.ui.theme.pink
 
 @Preview
 @Composable
 fun FromNewMedToPillCountAnimation() {
-    var isVisible by remember {
-        mutableStateOf(false)
-    }
-    Column(modifier = Modifier.fillMaxSize()) {
+    var isOptionsVisible by remember { mutableStateOf(false) }
+
+    AnimatedContent(
+        targetState = isOptionsVisible,
+        transitionSpec = { fadeIn(animationSpec = tween(400)) + expandHorizontally() togetherWith fadeOut(animationSpec = tween(400)) + shrinkHorizontally() }) { visible ->
         Box(
             modifier = Modifier
-                .padding(bottom = 24.dp)
-                .clip(shape = CircleShape)
-                .background(if (isVisible) pink else DeepPurple)
-                .size(50.dp)
-                .wrapContentSize(Alignment.Center)
-        )
-        AnimatedContent(
-            targetState = isVisible,
-            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
-            content = { visible ->
-                if (visible) {
-                    AlertDialog(
-                        icon = { Icon(Icons.Outlined.Alarm, "Alarma") },
-                        title = { Text("Agregar medicación") },
-                        text = {},
-                        onDismissRequest = {},
-                        confirmButton = {
-                            TextButton(onClick = { isVisible = !isVisible })
-                            { Text("Agregar", color = PowderedPink) }
+                .fillMaxWidth()
+                .height(120.dp)
+                .padding(12.dp)
+                .clip(RoundedCornerShape(20.dp))
+                .background(if (visible) lightGray else gray)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start,
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.9f)
+                        .height(120.dp)
+                        /*.background(
+                            if (!visible) lightGray else gray,
+                            RoundedCornerShape(20.dp)
+                        )*/
+                ) {
+                    if (!visible) {
+                        Box(
+                            modifier = Modifier
+                                .padding(12.dp)
+                                .size(60.dp)
+                                .clip(CircleShape)
+                                .background(petroleum),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                Icons.Filled.Alarm,
+                                contentDescription = "Alarma",
+                                tint = Color.White,
+                                modifier = Modifier.size(30.dp)
+                            )
+                        }
+                        Text(
+                            "hola",
+                            fontSize = 24.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White,
+                            modifier = Modifier.padding(vertical = 12.dp)
+                        )
+                    } else {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .padding(12.dp)
+                                    .size(60.dp)
+                                    .clip(CircleShape)
+                                    .background(lightGray.copy(alpha = 0.2f)),
+                                contentAlignment = Alignment.Center
+                            )
+                            {
+                                Icon(
+                                    Icons.Filled.DeleteForever,
+                                    "Conteo de Pastillas",
+                                    tint = pink,
+                                    modifier = Modifier
+                                        .size(35.dp)
 
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = {}
-                            ) {
-                                Text("Cancelar", color = PowderedPink)
+                                )
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        containerColor = DeepPurple,
-                        iconContentColor = SoftBlueLavander,
-                        titleContentColor = PowderedPink,
-                        textContentColor = PowderedPink,
-                        tonalElevation = 10.dp
-                    )
-                } else {
-
-                    AlertDialog(
-                        icon = { Icon(Icons.Outlined.Alarm, "Alarma") },
-                        title = { Text("Agregar alarma") },
-                        text = {},
-                        onDismissRequest = {},
-                        confirmButton = {
-                            TextButton(onClick = { isVisible = !isVisible })
-                            { Text("Agregar", color = PowderedPink) }
-                        },
-                        dismissButton = {
-                            TextButton(
-                                onClick = {}
-                            ) {
-                                Text("Cancelar", color = PowderedPink)
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        containerColor = DeepPurple,
-                        iconContentColor = SoftBlueLavander,
-                        titleContentColor = PowderedPink,
-                        textContentColor = PowderedPink,
-                        tonalElevation = 10.dp
-                    )
+                        }
+                    }
                 }
-            })
+                Icon(
+                    Icons.Filled.KeyboardDoubleArrowLeft,
+                    "Flecha",
+                    tint = Color.White,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .clickable { isOptionsVisible = !visible })
+
+            }
+        }
     }
 }

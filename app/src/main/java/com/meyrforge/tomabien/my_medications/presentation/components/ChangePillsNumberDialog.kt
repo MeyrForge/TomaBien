@@ -35,8 +35,8 @@ import com.meyrforge.tomabien.common.TestTags
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.DeepPurple
-import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import com.meyrforge.tomabien.ui.theme.lightGray
+import com.meyrforge.tomabien.ui.theme.petroleum
 
 @Composable
 fun ChangePillsNumberDialog( viewModel: MedicationViewModel = hiltViewModel(), medication: Medication, onDismiss: () -> Unit) {
@@ -67,19 +67,19 @@ fun ChangePillsNumberDialog( viewModel: MedicationViewModel = hiltViewModel(), m
                 onDismiss()
             },
                 modifier = Modifier.testTag(TestTags.SAVE_PILL_AMOUNT)) {
-                Text("Guardar", color = PowderedPink)
+                Text("Aceptar", color = Color.White)
             }
         },
         dismissButton = {
             TextButton({onDismiss()}) {
-                Text("Cancelar", color = PowderedPink)
+                Text("Cancelar", color = lightGray)
             }
         },
         modifier = Modifier.fillMaxWidth(),
         containerColor = DeepPurple,
-        iconContentColor = SoftBlueLavander,
-        titleContentColor = PowderedPink,
-        textContentColor = PowderedPink,
+        iconContentColor = petroleum,
+        titleContentColor = Color.White,
+        textContentColor = Color.White,
         tonalElevation = 10.dp
     )
 }
@@ -98,9 +98,9 @@ fun PillDialogContent(initialValue: Float, onValueChange: (String) -> Unit) {
     }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(textValue.ifEmpty { "0" }, fontSize = 40.sp, color = SoftBlueLavander, modifier = Modifier.semantics{contentDescription = "Cantidad de pastillas actual"})
-        Text(if (textValue == "1") "Pastilla" else "Pastillas", color = PowderedPink)
-        HorizontalDivider(color = SoftBlueLavander, thickness = 3.dp, modifier = Modifier.padding(vertical = 20.dp))
+        Text(textValue.ifEmpty { "0" }, fontSize = 40.sp, color = petroleum, modifier = Modifier.semantics{contentDescription = "Cantidad de pastillas actual"})
+        Text(if (textValue == "1") "Pastilla" else "Pastillas", color = Color.White)
+        HorizontalDivider(color = lightGray, thickness = 3.dp, modifier = Modifier.padding(vertical = 20.dp))
         TextField(
             modifier = Modifier.padding(bottom = 10.dp),
             value = textValue,
@@ -114,18 +114,13 @@ fun PillDialogContent(initialValue: Float, onValueChange: (String) -> Unit) {
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             colors = TextFieldDefaults.colors(
-                focusedTextColor = SoftBlueLavander,
-                unfocusedTextColor = SoftBlueLavander,
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                focusedIndicatorColor = SoftBlueLavander,
-                unfocusedIndicatorColor = PowderedPink.copy(alpha = 0.7f),
-                focusedLabelColor = PowderedPink,
-                unfocusedLabelColor = PowderedPink.copy(alpha = 0.7f),
-                cursorColor = SoftBlueLavander
+                unfocusedLabelColor = lightGray,
+                unfocusedIndicatorColor = lightGray,
+                focusedIndicatorColor = petroleum,
+                focusedLabelColor = petroleum,
+                focusedTextColor = lightGray
             )
         )
-        Text("TomaBien te va a notificar cuando te queden 5 o menos pastillas", color = SoftBlueLavander, textAlign = TextAlign.Center)
+        Text("TomaBien te va a notificar cuando te queden 5 o menos pastillas", color = petroleum, textAlign = TextAlign.Center)
     }
 }

@@ -8,12 +8,11 @@ import androidx.compose.material.icons.outlined.Alarm
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimeInput
-import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -23,6 +22,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -30,8 +30,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.meyrforge.tomabien.common.TestTags
 import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.ui.theme.DeepPurple
-import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import com.meyrforge.tomabien.ui.theme.lightGray
+import com.meyrforge.tomabien.ui.theme.petroleum
 import com.meyrforge.tomabien.ui.theme.pink
 import java.util.Calendar
 
@@ -86,7 +86,7 @@ fun AddAlarmDialog(
 
                 }
             ) {
-                Text("Agregar", color = PowderedPink)
+                Text("Aceptar", color = Color.White)
             }
         },
         dismissButton = {
@@ -95,14 +95,14 @@ fun AddAlarmDialog(
                     onDismiss()
                 }
             ) {
-                Text("Cancelar", color = PowderedPink)
+                Text("Cancelar", color = lightGray)
             }
         },
         modifier = Modifier.fillMaxWidth(),
         containerColor = DeepPurple,
-        iconContentColor = SoftBlueLavander,
-        titleContentColor = PowderedPink,
-        textContentColor = PowderedPink,
+        iconContentColor = petroleum,
+        titleContentColor = Color.White,
+        textContentColor = Color.White,
         tonalElevation = 10.dp
     )
 }
@@ -119,12 +119,12 @@ fun AddAlarmDialogContent(
         TimeInput(
             state = picker,
             colors = TimePickerDefaults.colors(
-                selectorColor = PowderedPink,
-                timeSelectorSelectedContainerColor = PowderedPink,
-                timeSelectorSelectedContentColor = DeepPurple
+                selectorColor = petroleum,
+                timeSelectorSelectedContainerColor = petroleum,
+                timeSelectorSelectedContentColor = Color.White
             )
         )
-        OutlinedTextField(
+        TextField(
             value = medicationDosage,
             onValueChange = {
                 if (it.isEmpty() || it.matches(patternFloat)) viewModel.onMedicationDosageChange(
@@ -133,14 +133,12 @@ fun AddAlarmDialogContent(
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             label = { Text("Dosis") },
-            colors = OutlinedTextFieldDefaults.colors(
-                unfocusedTextColor = PowderedPink,
-                unfocusedBorderColor = PowderedPink,
-                unfocusedLabelColor = PowderedPink,
-                unfocusedLeadingIconColor = PowderedPink,
-                focusedBorderColor = SoftBlueLavander,
-                focusedLabelColor = SoftBlueLavander,
-                focusedTextColor = SoftBlueLavander
+            colors = TextFieldDefaults.colors(
+                unfocusedLabelColor = lightGray,
+                unfocusedIndicatorColor = lightGray,
+                focusedIndicatorColor = petroleum,
+                focusedLabelColor = petroleum,
+                focusedTextColor = lightGray
             ),
             modifier = Modifier
                 .fillMaxWidth()

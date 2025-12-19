@@ -124,7 +124,7 @@ fun WeeklySummaryScreen(
                                 text = if (date == todayDateString) "Hoy ($date)" else date,
                                 style = MaterialTheme.typography.titleLarge,
                                 color = Color.White,
-                                fontSize = 28.sp,
+                                fontSize = 24.sp,
                                 modifier = Modifier.weight(1f)
                             )
                             Spacer(modifier = Modifier.width(8.dp))

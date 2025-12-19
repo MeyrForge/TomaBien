@@ -190,12 +190,12 @@ fun SingleMedicationComponent(
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly, modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
+                                .padding(horizontal = 12.dp)
                         ) {
                             Box(
                                 modifier = Modifier
-                                    .padding(12.dp)
-                                    .size(60.dp)
+                                    .padding(8.dp)
+                                    .size(50.dp)
                                     .clip(CircleShape)
                                     .background(lightGray),
                                 contentAlignment = Alignment.Center
@@ -206,7 +206,7 @@ fun SingleMedicationComponent(
                                     "Conteo de Pastillas",
                                     tint = if (!med.countActivated) NavBarColor else Color.White,
                                     modifier = Modifier
-                                        .size(35.dp)
+                                        .size(25.dp)
                                         .clickable {
                                             if (!med.countActivated) {
                                                 Toast.makeText(
@@ -223,8 +223,8 @@ fun SingleMedicationComponent(
                             }
                             Box(
                                 modifier = Modifier
-                                    .padding(12.dp)
-                                    .size(60.dp)
+                                    .padding(8.dp)
+                                    .size(50.dp)
                                     .clip(CircleShape)
                                     .background(lightGray),
                                 contentAlignment = Alignment.Center
@@ -235,7 +235,7 @@ fun SingleMedicationComponent(
                                     "Editar",
                                     tint = Color.White,
                                     modifier = Modifier
-                                        .size(35.dp)
+                                        .size(25.dp)
                                         .clickable {
                                             onEdit()
                                         }
@@ -243,8 +243,8 @@ fun SingleMedicationComponent(
                             }
                             Box(
                                 modifier = Modifier
-                                    .padding(12.dp)
-                                    .size(60.dp)
+                                    .padding(8.dp)
+                                    .size(50.dp)
                                     .clip(CircleShape)
                                     .background(lightGray),
                                 contentAlignment = Alignment.Center
@@ -255,7 +255,7 @@ fun SingleMedicationComponent(
                                     "Alarma",
                                     tint = Color.White,
                                     modifier = Modifier
-                                        .size(35.dp)
+                                        .size(25.dp)
                                         .clickable {
                                             navController.navigate(Screen.Alarms.route + "/${med.id}")
                                         }

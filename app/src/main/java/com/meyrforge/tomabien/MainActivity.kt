@@ -116,7 +116,7 @@ class MainActivity : ComponentActivity() {
                         val medicationsToNotify = medicationList
                             .mapNotNull { it.medication }
                             .filter { med ->
-                                med.numberOfPills != -1f && med.numberOfPills < 5 && med.numberOfPills > 0
+                                med.numberOfPills != -1f && med.numberOfPills <= 5 && med.numberOfPills > 0
                             }
 
                         // 2. Si la lista resultante no está vacía, mostramos la notificación.

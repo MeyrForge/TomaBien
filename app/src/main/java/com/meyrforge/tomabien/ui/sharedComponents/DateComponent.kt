@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.meyrforge.tomabien.common.getDayOfWeek
@@ -23,13 +24,8 @@ fun DateComponent(){
                 .padding(horizontal = 20.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text(currentDay(), fontSize = 24.sp, color = PowderedPink)
+            Text(currentDay(), fontSize = 24.sp, color = Color.White)
         }
-        HorizontalDivider(
-            thickness = 2.dp,
-            color = PowderedPink,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
 }
 
 private fun currentDay(): String {

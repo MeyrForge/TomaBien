@@ -2,13 +2,17 @@ package com.meyrforge.tomabien.weekly_summary.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material.icons.outlined.AccessAlarm
 import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.Medication
@@ -18,18 +22,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.room.util.TableInfo
 import com.meyrforge.tomabien.R
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
+import com.meyrforge.tomabien.ui.theme.gray
+import com.meyrforge.tomabien.ui.theme.green
+import com.meyrforge.tomabien.ui.theme.lightGray
+import com.meyrforge.tomabien.ui.theme.petroleum
+import com.meyrforge.tomabien.ui.theme.pink
+import com.meyrforge.tomabien.ui.theme.purple
 import com.meyrforge.tomabien.weekly_summary.domain.models.TrackerWithMedicationData
 
 @Composable
-fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
+fun SummaryItemComponentOld(tracker: TrackerWithMedicationData) {
     Column {
         Row(
             horizontalArrangement = Arrangement.Start,
@@ -71,7 +84,9 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.Top,
-                    modifier = Modifier.fillMaxWidth().padding(4.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
                 ) {
                     Row(verticalAlignment = Alignment.Top, modifier = Modifier.padding(4.dp)) {
                         Icon(Icons.Outlined.AccessAlarm, "Hora", tint = Color.White)
@@ -88,7 +103,8 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                             Text("Conteo desactivado", fontSize = 16.sp, color = Color.White)
                         } else {
                             val numberOfPills = tracker.medication.numberOfPills
-                            val count = if (numberOfPills % 1.0f == 0f) numberOfPills.toInt() else numberOfPills
+                            val count =
+                                if (numberOfPills % 1.0f == 0f) numberOfPills.toInt() else numberOfPills
                             Text(
                                 if (count == 1) "Queda 1 pastilla" else "Quedan $count pastillas",
                                 fontSize = 16.sp,
@@ -120,5 +136,79 @@ fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun SummaryItemComponent(tracker: TrackerWithMedicationData) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(12.dp)
+            .background(gray.copy(alpha = 0.9f), RoundedCornerShape(30.dp))
+            .padding(6.dp)
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .size(60.dp)
+                    .clip(CircleShape)
+                    .background((if (tracker.medication.optional) petroleum else purple).copy(alpha = 0.7f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    painterResource(R.drawable.ic_pills),
+                    contentDescription = "Medicacion",
+                    tint = Color.White.copy(alpha = 0.7f),
+                    modifier = Modifier.size(30.dp)
+                )
+            }
+            Text(
+                tracker.tracker.hour,
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .padding(bottom = 6.dp)
+            )
+        }
+            Column {
+                Text(
+                    "${tracker.medication.name} ${tracker.medication.grammage}",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White,
+                    modifier = Modifier.padding(12.dp)
+                )
+                Box(modifier = Modifier.padding(4.dp)) {
+                    if (tracker.tracker.taken) {
+                        PersonalizedChipComponent(green, "Tomada")
+                    } else {
+                        PersonalizedChipComponent(pink, "No tomada", Icons.Filled.RemoveCircle)
+                    }
+                }
+
+                Box(modifier = Modifier.padding(4.dp)) {
+                    if (!tracker.medication.countActivated) {
+                        PersonalizedChipComponent(
+                            petroleum,
+                            "Conteo desactivado",
+                            Icons.Filled.Medication
+                        )
+                    } else {
+                        val numberOfPills = tracker.medication.numberOfPills
+                        val count =
+                            if (numberOfPills % 1.0f == 0f) numberOfPills.toInt() else numberOfPills
+                        PersonalizedChipComponent(
+                            purple,
+                            if (count == 1) "Queda 1 pastilla" else "Quedan $count pastillas",
+                            Icons.Filled.Medication
+                        )
+                    }
+                }
+            }
+//        Row(modifier = Modifier.padding(12.dp)) {
+//        }
     }
 }

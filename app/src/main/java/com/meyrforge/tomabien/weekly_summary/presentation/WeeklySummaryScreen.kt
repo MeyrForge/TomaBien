@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -37,12 +38,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.meyrforge.tomabien.R
@@ -97,14 +100,6 @@ fun WeeklySummaryScreen(
                 .background(DeepPurple)
                 .padding(paddingValues)
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.new_tb_icon),
-                contentDescription = "TomaBien logo de fondo",
-                modifier = Modifier
-                    .fillMaxSize()
-                    .alpha(0.2f),
-                contentScale = ContentScale.Fit
-            )
             LazyColumn(
                 modifier = Modifier.Companion
                     .fillMaxSize()
@@ -128,14 +123,16 @@ fun WeeklySummaryScreen(
                             Text(
                                 text = if (date == todayDateString) "Hoy ($date)" else date,
                                 style = MaterialTheme.typography.titleLarge,
-                                color = PowderedPink,
+                                color = Color.White,
+                                fontSize = 28.sp,
                                 modifier = Modifier.weight(1f)
                             )
                             Spacer(modifier = Modifier.width(8.dp))
                             Icon(
-                                imageVector = if (isExpanded) Icons.Default.ArrowDropUp else Icons.Default.ArrowDropDown,
+                                imageVector = if (isExpanded) Icons.Filled.ArrowDropUp else Icons.Filled.ArrowDropDown,
                                 contentDescription = if (isExpanded) "Cerrar" else "Expandir",
-                                tint = PowderedPink
+                                tint = Color.White,
+                                modifier = Modifier.size(35.dp)
                             )
                         }
                     }
@@ -145,7 +142,7 @@ fun WeeklySummaryScreen(
                             enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
                             exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut()
                         ) {
-                            Column(modifier = Modifier.padding(start = 16.dp, bottom = 8.dp)) {
+                            Column(modifier = Modifier.padding(2.dp)) {
                                 SummaryItemComponent(tracker)
                             }
                         }

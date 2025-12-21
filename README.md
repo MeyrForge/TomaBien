@@ -1,6 +1,6 @@
 # TomaBien
 
-Aplicación de seguimiento de toma de medicamentos con sistema de alarmas/notificaciones.
+Aplicación de seguimiento de toma de medicamentos con sistema de notificaciones y conteo de stock de pastillas.
 
 ## Descripción
 
@@ -11,55 +11,61 @@ TomaBien es una aplicación para Android diseñada para ayudar a los usuarios a 
 *   **Seguimiento de Medicación:** Agrega, edita y elimina medicamentos fácilmente.
 *   **Alarmas Personalizables:** Configura recordatorios flexibles para cada medicamento, asegurando una toma a tiempo.
 *   **Gestión de Dosis:** Especifica la información de dosis para cada medicamento.
+*   **Gestión de Stock:** Conteo de pastillas para cada medicamento.
 *   **Interfaz Intuitiva:** Diseño fácil de usar para una navegación y gestión sencilla.
 
 ## Capturas de Pantalla
 
 **Mis Medicaciones**
 <div align="center">
-    <img src="screenshots/mis-medicaciones-vacio.png" alt="Mis medicaciones pantalla vacia" style="width: 30%; margin: 10px;">
-    <img src="screenshots/mis-medicaciones-lleno.png" alt="Mis medicaciones pantalla llena" style="width: 30%; margin: 10px;">
+    <img src="screenshots/MyMedications1.png" alt="Mis medicaciones" style="width: 30%; margin: 10px;">
+    <img src="screenshots/MyMedications2.png" alt="Mis medicaciones" style="width: 30%; margin: 10px;">
 </div>
 
-**Agregar Medicación**
+**Agregar/Editar Medicación**
 <div align="center">
-    <img src="screenshots/agregar-medicacion-vacio.png" alt="Agregar medicacion" style="width: 30%; margin: 10px;">
-    <img src="screenshots/agregar-medicacion-lleno.png" alt="Agregar medicacion" style="width: 30%; margin: 10px;">
+    <img src="screenshots/AddMedication.png" alt="Agregar medicacion" style="width: 30%; margin: 10px;">
+    <img src="screenshots/EditMedication.png" alt="Editar medicacion" style="width: 30%; margin: 10px;">
 </div>
 
-**Editar Medicación**
+**Conteo de Pastillas**
 <div align="center">
-    <img src="screenshots/editar-medicacion.png" alt="Editar medicacion" style="width: 30%; margin: 10px;">
+    <img src="screenshots/PillCount.png" alt="Conteo de pastillas" style="width: 30%; margin: 10px;">
 </div>
 
 **Alarmas**
 <div align="center">
-    <img src="screenshots/alarmas-vacio.png" alt="Alarmas pantalla vacia" style="width: 30%; margin: 10px;">
-    <img src="screenshots/agregar-alarma.png" alt="Agregar alarma" style="width: 30%; margin: 10px;"> 
-   <img src="screenshots/alarmas-lleno.png" alt="Alarmas pantalla llena" style="width: 30%; margin: 10px;">
+    <img src="screenshots/Alarms.png" alt="Alarmas pantalla" style="width: 30%; margin: 10px;">
+    <img src="screenshots/AddAlarm.png" alt="Agregar alarma" style="width: 30%; margin: 10px;"> 
 </div>
 
 **Seguimiento**
 <div align="center">
-    <img src="screenshots/seguimiento-tildado.png" alt="Seguimiento tildado" style="width: 30%; margin: 10px;">
-    <img src="screenshots/seguimiento-sintildar.png" alt="Seguimiento sin tildar" style="width: 30%; margin: 10px;">
+    <img src="screenshots/Tracker1.png" alt="Seguimiento sin tildar" style="width: 30%; margin: 10px;">
+    <img src="screenshots/Tracker%202.png" alt="Seguimiento tildado" style="width: 30%; margin: 10px;">
 </div>
 
 **Resumen de toma**
 <div align="center">
-    <img src="screenshots/resumen.png" alt="Resumen de toma" style="width: 30%; margin: 10px;">
+    <img src="screenshots/Summary1.png" alt="Resumen de toma" style="width: 30%; margin: 10px;">
+    <img src="screenshots/Summary2.png" alt="Resumen de toma" style="width: 30%; margin: 10px;">
 </div>
 
+**Notificación**
+<div align="center">
+    <img src="screenshots/Notification.png" alt="Notificacion" style="width: 30%; margin: 10px;">
+</div>
 
 
 ## Uso
 1. **Agregar una medicación:**
     *   Navegar a la pantalla de 'Mis medicaciones'.
-    *   Pulsar botón flotante de 'Agregar medicación'.
-    *   Ingresa el nombre del medicamento, la dosis y si es opcional o no.
+    *   Pulsar botón flotante con signo de suma.
+    *   Ingresá las especificaciones del medicamento y si se quiere hacer un conteo de stock o no.
+    *   En caso de conteo de stock se le llevara a otro formulario donde deberá agregar cuántas pastillas tiene en el momento.
 2. **Gestión de alarmas:**
-    *   Seleccionar el ícono de alarma del medicamento requerido en la pantalla 'Mis medicaciones'.
-    *   Agregar alarma pulsando el botón flotante de 'Agregar alarma' o eliminarla pulsando el ícono de basura según lo desee.
+    *   Seleccionar el ícono de alarma del medicamento requerido clicando en el ícono de flecha.
+    *   Agregar alarma pulsando el botón flotante de suma o eliminarla pulsando el ícono de basura según lo desee.
     *   Una alarma puede ser creada o eliminada pero no editada.
 3. **Gestión de toma:**
     *   Navegar a la pantalla 'Seguimiento' donde se mostrarán las alarmas creadas anteriormente y el medicamento correspondiente a cada una de ellas.

@@ -189,7 +189,7 @@ fun NewMedicationContent(
                 .padding(vertical = 6.dp)
         ) {
             TextField(
-                value = medicationGrammage,
+                value = medicationGrammage.replace(Regex("[a-zA-Z]"), "").trim(),
                 onValueChange = {
                     if (it.isEmpty() || it.matches(pattern)) viewModel.onMedicationGrammageChange(
                         it

@@ -140,6 +140,7 @@ class MedicationViewModel @Inject constructor(
                 _numberOfPills.floatValue = -1f
             }
             val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
+            _medicationGrammage.value.replace(Regex("[a-zA-Z]"), "").trim()
             viewModelScope.launch {
                 val result = saveMedicationUseCase(
                     _medicationName.value,
@@ -185,6 +186,7 @@ class MedicationViewModel @Inject constructor(
             }
             viewModelScope.launch {
                 val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
+                _medicationGrammage.value.replace(Regex("[a-zA-Z]"), "").trim()
                 val result = editMedicationUseCase(
                     Medication(
                         medicationId.intValue,

@@ -89,6 +89,8 @@ class MedicationTrackerViewModel @Inject constructor(
                                         medicationToChangePillCount,
                                         false
                                     )
+                                }else{
+                                    saveOrEditTracker(savedTracker, false)
                                 }
                             }
                         }

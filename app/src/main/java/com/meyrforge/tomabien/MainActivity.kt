@@ -25,9 +25,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddTask
 import androidx.compose.material.icons.filled.Summarize
-import androidx.compose.material.icons.outlined.AddTask
-import androidx.compose.material.icons.outlined.Medication
-import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -66,8 +63,6 @@ import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationAlarmsScreen
 import com.meyrforge.tomabien.my_medications.presentation.MyMedicationsScreen
 import com.meyrforge.tomabien.ui.theme.NavBarColor
-import com.meyrforge.tomabien.ui.theme.PowderedPink
-import com.meyrforge.tomabien.ui.theme.SoftBlueLavander
 import com.meyrforge.tomabien.ui.theme.TomaBienTheme
 import com.meyrforge.tomabien.ui.theme.gray
 import com.meyrforge.tomabien.ui.theme.petroleum
@@ -164,7 +159,8 @@ class MainActivity : ComponentActivity() {
 
         // Creamos el texto detallado para la notificación.
         val notificationText = medications.joinToString(separator = "\n") { med ->
-            "• ${med.name}: Quedan ${med.numberOfPills} pastillas."
+            val numberOfPillsFormatted = if(med.numberOfPills % 1.0f == 0f) med.numberOfPills.toInt() else med.numberOfPills
+            "• ${med.name}: Quedan $numberOfPillsFormatted pastillas."
         }
 
         // Creamos un estilo de notificación expandible.

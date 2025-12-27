@@ -114,8 +114,8 @@ fun EditMedicationDialog(
                                         numberOfPills = 0f
                                     )
                                 )
-                                med = null
                                 viewModel.onIsAddPillVisibleChange(DialogState.CHANGE_PILLS)
+                                med = null
                             } else {
                                 onDismiss()
                                 med = null
@@ -158,7 +158,7 @@ fun NewMedicationContent(
     val isOptional by viewModel.isOptional
     val countActivated by viewModel.countActivated
     val pattern = remember { Regex("^[0-9,.]+\$") }
-    val isMiligrams by viewModel.isMiligrams
+    var isGrams = medicationGrammage.takeLast(2) == "gr"
 
     Column() {
         Box(
@@ -216,11 +216,14 @@ fun NewMedicationContent(
             ) {
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
-                        .background(if (isMiligrams) petroleum else gray)
+                        .background(if (!isGrams) petroleum else gray)
                         .width(35.dp)
                         .height(50.dp)
                         .padding(4.dp)
-                        .clickable{viewModel.onIsMiligramsChange(true)}
+                        .clickable{
+                            isGrams = false
+                            viewModel.onIsMiligramsChange(true)
+                        }
                 ) {
                     Text(
                         "mg",
@@ -231,11 +234,13 @@ fun NewMedicationContent(
                 VerticalDivider()
                 Box(
                     contentAlignment = Alignment.Center, modifier = Modifier
-                        .background(if (!isMiligrams) petroleum else gray)
+                        .background(if (isGrams) petroleum else gray)
                         .width(35.dp)
                         .height(50.dp)
                         .padding(4.dp)
-                        .clickable{viewModel.onIsMiligramsChange(false)}
+                        .clickable{
+                            isGrams = true
+                            viewModel.onIsMiligramsChange(false)}
                 ) {
                     Text(
                         "gr",

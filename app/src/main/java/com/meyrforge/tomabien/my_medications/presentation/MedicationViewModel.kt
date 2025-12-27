@@ -19,9 +19,11 @@ import com.meyrforge.tomabien.my_medications.domain.usecases.GetAlarmsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.GetAllMedicationsUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.SaveMedicationUseCase
 import com.meyrforge.tomabien.my_medications.domain.usecases.UpdateNumberOfPillsUseCase
+import com.meyrforge.tomabien.weekly_summary.domain.usecases.GetMedicationByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.text.takeLast
 
 @HiltViewModel
 class MedicationViewModel @Inject constructor(
@@ -33,6 +35,7 @@ class MedicationViewModel @Inject constructor(
     private val addAlarmUseCase: AddAlarmUseCase,
     private val deleteAlarmUseCase: DeleteAlarmUseCase,
     private val updateNumberOfPillsUseCase: UpdateNumberOfPillsUseCase,
+    private val getMedicationByIdUseCase: GetMedicationByIdUseCase
 ) :
     ViewModel() {
     private val _medicationId = mutableIntStateOf(0)
@@ -93,11 +96,22 @@ class MedicationViewModel @Inject constructor(
     }
 
     fun onMedicationGrammageChange(grammage: String) {
+        if (grammage.endsWith("mg", ignoreCase = true)) {
+            _isMiligrams.value = true
+        } else if (grammage.endsWith("gr", ignoreCase = true)) {
+            _isMiligrams.value = false
+        }
         _medicationGrammage.value = grammage
     }
 
-    fun onIsMiligramsChange(value: Boolean){
-        _isMiligrams.value = value
+    fun onIsMiligramsChange(isMiligramsSelected: Boolean){
+        _isMiligrams.value = isMiligramsSelected
+        val currentGrammageValue = medicationGrammage.value.filter { it.isDigit() || it == '.' || it == ',' }
+        _medicationGrammage.value = if (isMiligramsSelected) {
+            "$currentGrammageValue mg"
+        } else {
+            "$currentGrammageValue gr"
+        }
     }
 
     fun onMedicationIdChange(id: Int) {
@@ -139,19 +153,18 @@ class MedicationViewModel @Inject constructor(
             } else {
                 _numberOfPills.floatValue = -1f
             }
-            val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
-            _medicationGrammage.value.replace(Regex("[a-zA-Z]"), "").trim()
             viewModelScope.launch {
                 val result = saveMedicationUseCase(
                     _medicationName.value,
-                    _medicationGrammage.value+miligramsOrGrams,
+                    _medicationGrammage.value,
                     _isOptional.value,
                     _numberOfPills.floatValue,
                     _countActivated.value
 
                 )
-                if (result) {
-                    resetValues()
+                if (result != 0) {
+                    val med = getMedicationByIdUseCase(result)
+                    med?.let { _medicationToCount.value = it }
                     getAllMedications()
                     _notificationMessage.value = "Medicacion agregada"
                 } else {
@@ -167,8 +180,6 @@ class MedicationViewModel @Inject constructor(
 
             if (medList != null) {
                 _medicationList.value = medList.filter { !it.deleted }
-                if (_medicationList.value?.isNotEmpty() ?: false)
-                    _medicationToCount.value = _medicationList.value?.last()
             }
         }
     }
@@ -179,19 +190,17 @@ class MedicationViewModel @Inject constructor(
         ) {
             _notificationMessage.value = "Completar los campos"
         } else {
-            if (_countActivated.value) {
+            if (_countActivated.value && _numberOfPills.floatValue == 1f) {
                 _numberOfPills.floatValue = 0f
-            } else {
+            } else if (!_countActivated.value) {
                 _numberOfPills.floatValue = -1f
             }
             viewModelScope.launch {
-                val miligramsOrGrams = if (isMiligrams.value) "mg" else "gr"
-                _medicationGrammage.value.replace(Regex("[a-zA-Z]"), "").trim()
                 val result = editMedicationUseCase(
                     Medication(
                         medicationId.intValue,
                         medicationName.value,
-                        _medicationGrammage.value+miligramsOrGrams,
+                        _medicationGrammage.value,
                         isOptional.value,
                         numberOfPills.floatValue,
                         taken = false,
@@ -199,8 +208,8 @@ class MedicationViewModel @Inject constructor(
                         countActivated = _countActivated.value
                     )
                 )
-                if (result) {
-                    resetValues()
+                if (result != 0L) {
+                    _medicationToCount.value = getMedicationByIdUseCase(medicationId.intValue)
                     getAllMedications()
                     _notificationMessage.value = "Medicacion editada"
                 } else {
@@ -214,9 +223,9 @@ class MedicationViewModel @Inject constructor(
         viewModelScope.launch {
             medication.deleted = true
             val result = editMedicationUseCase(medication)
-            if (result) {
-                _isAddPillVisible.value = DialogState.HIDDEN
+            if (result != 0L) {
                 getAllMedications()
+                _isAddPillVisible.value = DialogState.HIDDEN
             } else {
                 _notificationMessage.value = "Algo salio mal"
             }
@@ -275,6 +284,7 @@ class MedicationViewModel @Inject constructor(
         _medicationGrammage.value = ""
         _isOptional.value = false
         _countActivated.value = false
+        _isMiligrams.value = true
     }
 
     fun updateNumberOfPills(medicationId: Int, numberOfPills: Float) {

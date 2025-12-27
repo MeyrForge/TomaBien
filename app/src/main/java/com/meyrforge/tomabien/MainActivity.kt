@@ -61,6 +61,7 @@ import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerS
 import com.meyrforge.tomabien.medication_tracker.presentation.MedicationTrackerViewModel
 import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import com.meyrforge.tomabien.my_medications.presentation.MedicationAlarmsScreen
+import com.meyrforge.tomabien.my_medications.presentation.MedicationViewModel
 import com.meyrforge.tomabien.my_medications.presentation.MyMedicationsScreen
 import com.meyrforge.tomabien.ui.theme.NavBarColor
 import com.meyrforge.tomabien.ui.theme.TomaBienTheme
@@ -73,7 +74,6 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private val medicationTrackerViewModel: MedicationTrackerViewModel by viewModels()
 
     @Inject
     lateinit var alarmManager: AlarmManager
@@ -99,19 +99,21 @@ class MainActivity : ComponentActivity() {
                     }
                 val navController = rememberNavController()
                 val viewModel: MedicationTrackerViewModel = viewModel()
+                val medViewModel: MedicationViewModel = viewModel()
                 LaunchedEffect(Unit) {
                     viewModel.getMedicationWithAlarms()
+                    medViewModel.getAllMedications()
                 }
 
-                val medicationList by viewModel.medicationList.observeAsState(initial = emptyList())
+                val medicationList by medViewModel.medicationList.observeAsState(initial = emptyList())
 
                 LaunchedEffect(medicationList.isNotEmpty()) {
                     if (medicationList.isNotEmpty()) {
                         // 1. Usamos .filter() para encontrar TODAS las medicaciones con pocas pastillas.
                         val medicationsToNotify = medicationList
-                            .mapNotNull { it.medication }
+                            .mapNotNull { it }
                             .filter { med ->
-                                med.numberOfPills != -1f && med.numberOfPills <= 5 && med.numberOfPills > 0
+                                med.numberOfPills != -1f && med.numberOfPills <= 5 && med.numberOfPills >= 0
                             }
 
                         // 2. Si la lista resultante no está vacía, mostramos la notificación.

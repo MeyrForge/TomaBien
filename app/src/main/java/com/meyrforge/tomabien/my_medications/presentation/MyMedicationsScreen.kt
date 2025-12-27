@@ -182,7 +182,7 @@ fun MyMedicationsScreen(
                 }
 
                 DialogState.HIDDEN -> {
-                    Log.i("MyMedicationsScreen", "DialogState.HIDDEN")
+                    viewModel.resetValues()
                 }
 
                 DialogState.ADD_MEDICATION -> {

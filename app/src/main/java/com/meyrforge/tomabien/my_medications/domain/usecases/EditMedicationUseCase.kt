@@ -6,14 +6,14 @@ import com.meyrforge.tomabien.my_medications.domain.models.Medication
 import javax.inject.Inject
 
 class EditMedicationUseCase @Inject constructor(private val repository: MedicationRepository) {
-    suspend operator fun invoke(med: Medication): Boolean{
-        return when (repository.editMedication(med)) {
+    suspend operator fun invoke(med: Medication): Long{
+        return when (val result = repository.editMedication(med)) {
             is Result.Success -> {
-                true
+                result.data
             }
 
             is Result.Error -> {
-                false
+                0L
             }
         }
     }

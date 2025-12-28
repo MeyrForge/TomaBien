@@ -248,10 +248,9 @@ class MainActivity : ComponentActivity() {
                 PendingIntent.getBroadcast(this, requestCode, intent, pendingIntentFlags)
 
             try {
-                alarmManager.setInexactRepeating(
+                alarmManager.set(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
-                    AlarmManager.INTERVAL_DAY,
                     pendingIntent
                 )
                 val hourFormatted = if (hour.toString().length == 1) {
@@ -262,7 +261,7 @@ class MainActivity : ComponentActivity() {
                 } else minute.toString()
                 Toast.makeText(
                     this,
-                    "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días.",
+                    "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días a partir de mañana.",
                     Toast.LENGTH_LONG
                 )
                     .show()
@@ -286,6 +285,7 @@ class MainActivity : ComponentActivity() {
         val intent = Intent(this, AlarmReceiver::class.java).apply {
             putExtra("message", "¡Hora de tu medicina! Es momento de tomar $medName.")
             putExtra("alarm_id", requestCode)
+
         }
 
 

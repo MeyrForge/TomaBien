@@ -51,8 +51,7 @@ fun AddAlarmDialog(
         initialMinute = currentTime.get(Calendar.MINUTE),
         is24Hour = true
     )
-    val code =
-        "${timePickerState.hour}${timePickerState.minute}${viewModel.medicationId.intValue}".toInt()
+
     AlertDialog(
         icon = { Icon(Icons.Outlined.Alarm, "Alarma") },
         title = { Text("Agregar alarma") },
@@ -69,6 +68,14 @@ fun AddAlarmDialog(
             TextButton(
                 modifier = Modifier.testTag(TestTags.ADD_ALARM),
                 onClick = {
+                    val hourFormatted = if (timePickerState.hour.toString().length == 1) {
+                        "0${timePickerState.hour}"
+                    } else timePickerState.hour.toString()
+                    val minuteFormatted = if (timePickerState.minute.toString().length == 1) {
+                        "0${timePickerState.minute}"
+                    } else timePickerState.minute.toString()
+                    val code =
+                        "1${hourFormatted}${minuteFormatted}${viewModel.medicationId.intValue}".toInt()
                     viewModel.addAlarm(
                         code,
                         timePickerState.hour,

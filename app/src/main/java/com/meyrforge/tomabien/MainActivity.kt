@@ -233,8 +233,6 @@ class MainActivity : ComponentActivity() {
                 set(Calendar.MILLISECOND, 0)
 
 
-                add(Calendar.DAY_OF_YEAR, 1)
-
             }
 
             val intent = Intent(this, AlarmReceiver::class.java).apply {
@@ -248,7 +246,7 @@ class MainActivity : ComponentActivity() {
                 PendingIntent.getBroadcast(this, requestCode, intent, pendingIntentFlags)
 
             try {
-                alarmManager.set(
+                alarmManager.setAndAllowWhileIdle(
                     AlarmManager.RTC_WAKEUP,
                     calendar.timeInMillis,
                     pendingIntent
@@ -261,7 +259,7 @@ class MainActivity : ComponentActivity() {
                 } else minute.toString()
                 Toast.makeText(
                     this,
-                    "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días a partir de mañana.",
+                    "Alarma programada para las $hourFormatted:$minuteFormatted, todos los días.",
                     Toast.LENGTH_LONG
                 )
                     .show()

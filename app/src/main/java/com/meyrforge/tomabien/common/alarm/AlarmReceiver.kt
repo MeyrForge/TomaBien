@@ -89,7 +89,7 @@ class AlarmReceiver: BroadcastReceiver() {
         val pendingIntent =
             PendingIntent.getBroadcast(context, requestCode, newIntent, pendingIntentFlags)
 
-        alarmManager.set(
+        alarmManager.setAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             pendingIntent
